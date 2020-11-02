@@ -144,7 +144,7 @@ namespace NetworkUtil
             {
                 state.ErrorOccured = true;
                 state.ErrorMessage = "Connect to server failed.";
-                toCall(state);
+                toCall(state); 
             }
 
         }
@@ -164,12 +164,14 @@ namespace NetworkUtil
         /// <param name="ar">The object asynchronously passed via BeginConnect</param>
         private static void ConnectedCallback(IAsyncResult ar)
         {
+
+           // Console.WriteLine("contact from server");
             //need try blocks and error handling 
             SocketState state = (SocketState)ar.AsyncState;
-
+            //officially finalize and create the socket we must call EndConnect. 
             state.TheSocket.EndConnect(ar);
 
-            state.OnNetworkAction(state);
+            state.OnNetworkAction(state); //toCall(state)
         }
 
 
@@ -191,7 +193,7 @@ namespace NetworkUtil
         /// <param name="state">The SocketState to begin receiving</param>
         public static void GetData(SocketState state)
         {
-            //state.TheSocket.BeginReceive(...);
+           // state.TheSocket.BeginReceive();
             throw new NotImplementedException();
         }
 
@@ -214,7 +216,17 @@ namespace NetworkUtil
         /// </param>
         private static void ReceiveCallback(IAsyncResult ar)
         {
-            throw new NotImplementedException();
+            //"mostly correct but needs some fixing" -kopta
+
+
+            SocketState state = (SocketState)ar.AsyncState;
+          //  Console.WriteLine("Message Received");
+            int numBytes = state.TheSocket.EndReceive(ar);
+
+            string message = Encoding.UTF8.GetString(state.buffer, 0, numBytes);
+          //  Console.WriteLine(message);
+
+            state.TheSocket.BeginReceive(state.buffer, 0, state.buffer.Length, SocketFlags.None, ReceiveCallback, null);
         }
 
         /// <summary>
