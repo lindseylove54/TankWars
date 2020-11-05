@@ -180,8 +180,6 @@ namespace NetworkUtil
                 state.OnNetworkAction(state);
             }
             
-
-            state.OnNetworkAction(state); //toCall(state)
         }
 
 
@@ -206,7 +204,7 @@ namespace NetworkUtil
             
             try
             {
-                // begin end loop to receive data from server
+                // begin event loop to receive data from server
                 state.TheSocket.BeginReceive(state.buffer, 0, state.buffer.Length,
                     SocketFlags.None, ReceiveCallback, state);
             }
@@ -247,7 +245,7 @@ namespace NetworkUtil
             if(numBytes > 0)
             {
                 string message = Encoding.UTF8.GetString(state.buffer, 0, numBytes);
-                //append data to the buffer
+                //append data to the data stringbuilder
                 state.data.Append(message);
                 state.OnNetworkAction(state);
             }
