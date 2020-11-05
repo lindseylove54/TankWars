@@ -166,10 +166,20 @@ namespace NetworkUtil
         {
 
            // Console.WriteLine("contact from server");
-            //need try blocks and error handling 
+
             SocketState state = (SocketState)ar.AsyncState;
-            //officially finalize and create the socket we must call EndConnect. 
-            state.TheSocket.EndConnect(ar);
+
+            try
+            {
+                //officially finalize and create the socket we must call EndConnect. 
+                state.TheSocket.EndConnect(ar);
+            } catch(Exception e)
+            {
+                state.ErrorOccured = true;
+                state.ErrorMessage = e.Message;
+                state.OnNetworkAction(state);
+            }
+            
 
             state.OnNetworkAction(state); //toCall(state)
         }
@@ -193,8 +203,20 @@ namespace NetworkUtil
         /// <param name="state">The SocketState to begin receiving</param>
         public static void GetData(SocketState state)
         {
-           // state.TheSocket.BeginReceive();
-            throw new NotImplementedException();
+            
+            try
+            {
+                // begin end loop to receive data from server
+                state.TheSocket.BeginReceive(state.buffer, 0, state.buffer.Length,
+                    SocketFlags.None, ReceiveCallback, state);
+            }
+            catch (Exception e)
+            {
+                state.ErrorOccured = true;
+                state.ErrorMessage = e.Message;
+                state.OnNetworkAction(state);
+            }
+
         }
 
         /// <summary>
@@ -217,16 +239,19 @@ namespace NetworkUtil
         private static void ReceiveCallback(IAsyncResult ar)
         {
             //"mostly correct but needs some fixing" -kopta
-
+                //should be correct now....i think....
 
             SocketState state = (SocketState)ar.AsyncState;
-          //  Console.WriteLine("Message Received");
             int numBytes = state.TheSocket.EndReceive(ar);
 
-            string message = Encoding.UTF8.GetString(state.buffer, 0, numBytes);
-          //  Console.WriteLine(message);
-
-            state.TheSocket.BeginReceive(state.buffer, 0, state.buffer.Length, SocketFlags.None, ReceiveCallback, null);
+            if(numBytes > 0)
+            {
+                string message = Encoding.UTF8.GetString(state.buffer, 0, numBytes);
+                //append data to the buffer
+                state.data.Append(message);
+                state.OnNetworkAction(state);
+            }
+           
         }
 
         /// <summary>
@@ -241,7 +266,27 @@ namespace NetworkUtil
         /// <returns>True if the send process was started, false if an error occurs or the socket is already closed</returns>
         public static bool Send(Socket socket, string data)
         {
-            throw new NotImplementedException();
+            //not entirely positive if correct
+
+            byte[] msgBytes = Encoding.UTF8.GetBytes(data);
+            SocketState state = new SocketState(null, socket);
+
+            try
+            {
+                if (socket.Connected)
+                {
+                    socket.BeginSend(msgBytes, 0, msgBytes.Length, SocketFlags.None, SendCallback, state); 
+                }
+                return true;
+
+            }
+            catch (Exception e)
+            {
+                socket.Close();
+                return false;
+            }
+
+
         }
 
         /// <summary>
