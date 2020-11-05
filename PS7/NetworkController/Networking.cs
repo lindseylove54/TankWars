@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Linq.Expressions;
 using System.Net;
 using System.Net.Sockets;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace NetworkUtil
@@ -21,8 +23,20 @@ namespace NetworkUtil
         /// <param name="port">The the port to listen on</param>
         public static TcpListener StartServer(Action<SocketState> toCall, int port)
         {
-            //if unable to start server, you can return null or just let it throw 
-            throw new NotImplementedException();
+           
+                //1.  Initialize the listener
+                TcpListener listener = new TcpListener(IPAddress.Any, port);
+                //2. Start the listener
+                listener.Start();
+                //3.  Accept a client
+                Tuple<TcpListener, Action<SocketState>> tuple =
+                   new Tuple<TcpListener, Action<SocketState>>(listener, toCall);
+
+                listener.BeginAcceptSocket(AcceptNewClient, tuple);
+
+                return listener;
+            
+
         }
 
         /// <summary>
@@ -45,7 +59,23 @@ namespace NetworkUtil
         /// 1) a delegate so the user can take action (a SocketState Action), and 2) the TcpListener</param>
         private static void AcceptNewClient(IAsyncResult ar)
         {
-            throw new NotImplementedException();
+            // Console.WriteLine("Contact from client");
+            Tuple<TcpListener, Action<SocketState>> tuple = (Tuple<TcpListener, Action<SocketState>>)ar.AsyncState;
+            Socket newClient = tuple.Item1.EndAcceptSocket(ar);
+            SocketState state = new SocketState(tuple.Item2, newClient);
+            try
+            {
+               
+                state.OnNetworkAction(state);
+                //event loop to accept new clients
+                tuple.Item1.BeginAcceptSocket(AcceptNewClient, state);
+            }
+            catch (Exception)
+            {
+                state.ErrorOccured = true;
+                state.ErrorMessage = "There was a problem with accepting a new client.";
+                state.OnNetworkAction(state);
+            }
         }
 
         /// <summary>
@@ -53,7 +83,14 @@ namespace NetworkUtil
         /// </summary>
         public static void StopServer(TcpListener listener)
         {
-            throw new NotImplementedException();
+            try
+            {
+                listener.Stop();
+            }
+            catch (Exception)
+            {
+                return;
+            }
         }
 
         /////////////////////////////////////////////////////////////////////////////////////////
@@ -173,6 +210,9 @@ namespace NetworkUtil
             {
                 //officially finalize and create the socket we must call EndConnect. 
                 state.TheSocket.EndConnect(ar);
+
+                //need to inform user
+                state.OnNetworkAction(state);
             } catch(Exception e)
             {
                 state.ErrorOccured = true;
@@ -213,6 +253,7 @@ namespace NetworkUtil
                 state.ErrorOccured = true;
                 state.ErrorMessage = e.Message;
                 state.OnNetworkAction(state);
+
             }
 
         }
@@ -237,20 +278,37 @@ namespace NetworkUtil
         private static void ReceiveCallback(IAsyncResult ar)
         {
             //"mostly correct but needs some fixing" -kopta
-                //should be correct now....i think....
 
+            //should be correct now....i think....
             SocketState state = (SocketState)ar.AsyncState;
-            int numBytes = state.TheSocket.EndReceive(ar);
-
-            if(numBytes > 0)
+            try
             {
-                string message = Encoding.UTF8.GetString(state.buffer, 0, numBytes);
-                //append data to the data stringbuilder
-                state.data.Append(message);
+                int numBytes = state.TheSocket.EndReceive(ar);
+
+                if (numBytes > 0)
+                {
+                    string message = Encoding.UTF8.GetString(state.buffer, 0, numBytes);
+                    //append data to the data stringbuilder
+                    lock (state.data)
+                    {
+                        state.data.Append(message);
+                    }
+                    state.OnNetworkAction(state);
+                }
+                else if(numBytes == 0)
+                {
+                    throw new Exception();
+                }
+            }
+            catch(Exception e)
+            {
+                state.ErrorOccured = true;
+                state.ErrorMessage = e.Message;
                 state.OnNetworkAction(state);
             }
-           
+
         }
+        
 
         /// <summary>
         /// Begin the asynchronous process of sending data via BeginSend, using SendCallback to finalize the send process.
