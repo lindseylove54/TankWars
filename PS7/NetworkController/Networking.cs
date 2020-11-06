@@ -29,8 +29,8 @@ namespace NetworkUtil
                 //2. Start the listener
                 listener.Start();
                 //3.  Accept a client
-                Tuple<TcpListener, Action<SocketState>> tuple =
-                   new Tuple<TcpListener, Action<SocketState>>(listener, toCall);
+                Tuple<Action<SocketState>, TcpListener> tuple =
+                   new Tuple< Action<SocketState>, TcpListener> (toCall, listener);
 
                 listener.BeginAcceptSocket(AcceptNewClient, tuple);
 
@@ -60,22 +60,25 @@ namespace NetworkUtil
         private static void AcceptNewClient(IAsyncResult ar)
         {
             // Console.WriteLine("Contact from client");
-            Tuple<TcpListener, Action<SocketState>> tuple = (Tuple<TcpListener, Action<SocketState>>)ar.AsyncState;
-            Socket newClient = tuple.Item1.EndAcceptSocket(ar);
-            SocketState state = new SocketState(tuple.Item2, newClient);
+            Tuple<Action<SocketState>, TcpListener> tuple = (Tuple<Action<SocketState>, TcpListener>)ar.AsyncState;
+            SocketState state = null;
+            Socket newClient = null;
             try
             {
-               
+                newClient = tuple.Item2.EndAcceptSocket(ar);
+                state = new SocketState(tuple.Item1, newClient);
                 state.OnNetworkAction(state);
                 //event loop to accept new clients
-                tuple.Item1.BeginAcceptSocket(AcceptNewClient, state);
+                tuple.Item2.BeginAcceptSocket(AcceptNewClient, tuple);
             }
             catch (Exception)
             {
+                state = new SocketState(tuple.Item1, newClient);
                 state.ErrorOccured = true;
                 state.ErrorMessage = "There was a problem with accepting a new client.";
                 state.OnNetworkAction(state);
             }
+            
         }
 
         /// <summary>
@@ -325,16 +328,14 @@ namespace NetworkUtil
         /// <returns>True if the send process was started, false if an error occurs or the socket is already closed</returns>
         public static bool Send(Socket socket, string data)
         {
-            //not entirely positive if correct
 
             byte[] msgBytes = Encoding.UTF8.GetBytes(data);
-            SocketState state = new SocketState(null, socket);
 
             try
             {
                 if (socket.Connected)
                 {
-                    socket.BeginSend(msgBytes, 0, msgBytes.Length, SocketFlags.None, SendCallback, state); 
+                    socket.BeginSend(msgBytes, 0, msgBytes.Length, SocketFlags.None, SendCallback, socket); 
                 }
                 return true;
 
@@ -362,8 +363,11 @@ namespace NetworkUtil
         private static void SendCallback(IAsyncResult ar)
         {
             //needs error handling
+
             Socket socket = (Socket)ar.AsyncState;
-            socket.EndSend(ar);
+             socket.EndSend(ar);
+            
+            
         }
 
 
