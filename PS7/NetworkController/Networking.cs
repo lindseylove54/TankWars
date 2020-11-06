@@ -342,6 +342,7 @@ namespace NetworkUtil
             }
             catch (Exception e)
             {
+                socket.Shutdown(SocketShutdown.Both);
                 socket.Close();
                 return false;
             }
@@ -362,11 +363,15 @@ namespace NetworkUtil
         /// </param>
         private static void SendCallback(IAsyncResult ar)
         {
-            //needs error handling
-
-            Socket socket = (Socket)ar.AsyncState;
-             socket.EndSend(ar);
-            
+            try
+            {
+                Socket socket = (Socket)ar.AsyncState;
+                socket.EndSend(ar);
+            }
+            catch
+            {
+                //do nothing
+            }
             
         }
 
@@ -384,7 +389,24 @@ namespace NetworkUtil
         /// <returns>True if the send process was started, false if an error occurs or the socket is already closed</returns>
         public static bool SendAndClose(Socket socket, string data)
         {
-            throw new NotImplementedException();
+            byte[] msgBytes = Encoding.UTF8.GetBytes(data);
+
+            try
+            {
+                if (socket.Connected)
+                {
+                    socket.BeginSend(msgBytes, 0, msgBytes.Length, SocketFlags.None, SendCallback, socket);
+                }
+                socket.Close();
+                return true;
+
+            }
+            catch (Exception e)
+            {
+                socket.Shutdown(SocketShutdown.Both);
+                socket.Close();
+                return false;
+            }
         }
 
         /// <summary>
@@ -402,7 +424,15 @@ namespace NetworkUtil
         /// </param>
         private static void SendAndCloseCallback(IAsyncResult ar)
         {
-            throw new NotImplementedException();
+            try
+            {
+                Socket socket = (Socket)ar.AsyncState;
+                socket.EndSend(ar);
+            }
+            catch
+            {
+                //do nothing
+            }
         }
 
     }
