@@ -1,4 +1,5 @@
 using Microsoft;// Author: Daniel Kopta, May 2019
+using Microsoft.VisualStudio.TestPlatform.ObjectModel.Client;
 // Unit testing examples for CS 3500 networking library (part of final project)
 // University of Utah
 
@@ -465,6 +466,29 @@ namespace NetworkUtil
 
             Assert.AreEqual(message.ToString(), testLocalSocketState.GetData());
         }
+        [DataRow(true)]
+        [DataRow(false)]
+        [DataTestMethod]
+        public void TestSendAndCloseTinyMessage(bool clientSide)
+        {
+            SetupTestConnections(clientSide, out testListener, out testLocalSocketState, out testRemoteSocketState);
+
+            // Set the action to do nothing
+            testLocalSocketState.OnNetworkAction = x => { };
+            testRemoteSocketState.OnNetworkAction = x => { };
+
+            Networking.SendAndClose(testLocalSocketState.TheSocket, "a");
+
+            Networking.GetData(testRemoteSocketState);
+
+            // Note that waiting for data like this is *NOT* how the networking library is 
+            // intended to be used. This is only for testing purposes.
+            // Normally, you would provide an OnNetworkAction that handles the data.
+            NetworkTestHelper.WaitForOrTimeout(() => testRemoteSocketState.GetData().Length > 0, NetworkTestHelper.timeout);
+            Assert.IsFalse(testLocalSocketState.TheSocket.Connected);
+            Assert.AreEqual("a", testRemoteSocketState.GetData());
+        }
+
     }
 }
 

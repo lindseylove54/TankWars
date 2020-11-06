@@ -4,7 +4,10 @@ using System.Net;
 using System.Net.Sockets;
 using System.Runtime.CompilerServices;
 using System.Text;
-
+/// <summary>
+/// Author: Tyler Amy, Lindsey Loveland  .. November 2020
+/// PS7
+/// </summary>
 namespace NetworkUtil
 {
 
@@ -71,7 +74,7 @@ namespace NetworkUtil
                 //event loop to accept new clients
                 tuple.Item2.BeginAcceptSocket(AcceptNewClient, tuple);
             }
-            catch (Exception)
+            catch(Exception)
             {
                 state = new SocketState(tuple.Item1, newClient);
                 state.ErrorOccured = true;
@@ -181,13 +184,15 @@ namespace NetworkUtil
                IAsyncResult result = state.TheSocket.BeginConnect(ipAddress, port, ConnectedCallback, state);
                bool success = result.AsyncWaitHandle.WaitOne(3000, true);
                 if (!success)
-                    throw new TimeoutException();
+                {
+                    state.TheSocket.Close();
+                }
             }
-            catch(Exception e)
+            catch(Exception)
             {
                 state.ErrorOccured = true;
                 state.ErrorMessage = "Connect to server failed.";
-                state.OnNetworkAction(state);
+                toCall(state);
             }
 
         }
@@ -208,7 +213,6 @@ namespace NetworkUtil
         private static void ConnectedCallback(IAsyncResult ar)
         {
 
-           // Console.WriteLine("contact from server");
 
             SocketState state = (SocketState)ar.AsyncState;
 
@@ -217,7 +221,7 @@ namespace NetworkUtil
                 //officially finalize and create the socket we must call EndConnect. 
                 state.TheSocket.EndConnect(ar);
 
-                //need to inform user
+                //inform user
                 state.OnNetworkAction(state);
             } catch(Exception e)
             {
@@ -283,9 +287,7 @@ namespace NetworkUtil
         /// </param>
         private static void ReceiveCallback(IAsyncResult ar)
         {
-            //"mostly correct but needs some fixing" -kopta
 
-            //should be correct now....i think....
             SocketState state = (SocketState)ar.AsyncState;
             try
             {
@@ -299,20 +301,18 @@ namespace NetworkUtil
                     {
                         state.data.Append(message);
                     }
-                    state.OnNetworkAction(state);
                 }
-                else if(numBytes == 0)
+                else 
                 {
-                    throw new Exception();
+                    throw new Exception("There was a problem receiving data.");
                 }
             }
             catch(Exception e)
             {
                 state.ErrorOccured = true;
                 state.ErrorMessage = e.Message;
-                state.OnNetworkAction(state);
             }
-
+            state.OnNetworkAction(state);
         }
         
 
@@ -340,7 +340,7 @@ namespace NetworkUtil
                 return true;
 
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 socket.Shutdown(SocketShutdown.Both);
                 socket.Close();
@@ -368,7 +368,7 @@ namespace NetworkUtil
                 Socket socket = (Socket)ar.AsyncState;
                 socket.EndSend(ar);
             }
-            catch
+            catch(Exception)
             {
                 //do nothing
             }
@@ -395,13 +395,12 @@ namespace NetworkUtil
             {
                 if (socket.Connected)
                 {
-                    socket.BeginSend(msgBytes, 0, msgBytes.Length, SocketFlags.None, SendCallback, socket);
+                    socket.BeginSend(msgBytes, 0, msgBytes.Length, SocketFlags.None, SendAndCloseCallback, socket);
                 }
-                socket.Close();
                 return true;
 
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 socket.Shutdown(SocketShutdown.Both);
                 socket.Close();
@@ -424,16 +423,20 @@ namespace NetworkUtil
         /// </param>
         private static void SendAndCloseCallback(IAsyncResult ar)
         {
+            Socket socket = null;
             try
             {
-                Socket socket = (Socket)ar.AsyncState;
+                socket = (Socket)ar.AsyncState;
                 socket.EndSend(ar);
+
             }
-            catch
+            catch(Exception)
             {
                 //do nothing
             }
+            socket.Close();
         }
 
+    
     }
 }
