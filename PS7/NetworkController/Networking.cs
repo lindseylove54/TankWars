@@ -175,13 +175,16 @@ namespace NetworkUtil
             try
             {
                 //connect
-                state.TheSocket.BeginConnect(ipAddress, port, ConnectedCallback, state);
+               IAsyncResult result = state.TheSocket.BeginConnect(ipAddress, port, ConnectedCallback, state);
+               bool success = result.AsyncWaitHandle.WaitOne(3000, true);
+                if (!success)
+                    throw new TimeoutException();
             }
-            catch(Exception)
+            catch(Exception e)
             {
                 state.ErrorOccured = true;
                 state.ErrorMessage = "Connect to server failed.";
-                toCall(state); 
+                state.OnNetworkAction(state);
             }
 
         }
@@ -358,7 +361,9 @@ namespace NetworkUtil
         /// </param>
         private static void SendCallback(IAsyncResult ar)
         {
-            throw new NotImplementedException();
+            //needs error handling
+            Socket socket = (Socket)ar.AsyncState;
+            socket.EndSend(ar);
         }
 
 
