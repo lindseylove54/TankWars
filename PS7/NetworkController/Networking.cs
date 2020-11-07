@@ -62,7 +62,6 @@ namespace NetworkUtil
         /// 1) a delegate so the user can take action (a SocketState Action), and 2) the TcpListener</param>
         private static void AcceptNewClient(IAsyncResult ar)
         {
-            // Console.WriteLine("Contact from client");
             Tuple<Action<SocketState>, TcpListener> tuple = (Tuple<Action<SocketState>, TcpListener>)ar.AsyncState;
             SocketState state = null;
             Socket newClient = null;
@@ -226,7 +225,7 @@ namespace NetworkUtil
             } catch(Exception e)
             {
                 state.ErrorOccured = true;
-                state.ErrorMessage = e.Message;
+                state.ErrorMessage = "There was a problem connecting to the server";
                 state.OnNetworkAction(state);
             }
             
