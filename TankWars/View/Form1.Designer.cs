@@ -1,6 +1,6 @@
 ﻿namespace View
 {
-    partial class Form
+    partial class Form1
     {
         /// <summary>
         /// Required designer variable.
@@ -28,67 +28,66 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label1 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
-            this.ServerTextbox = new System.Windows.Forms.TextBox();
-            this.nameTextBox = new System.Windows.Forms.TextBox();
-            this.ConnectButton = new System.Windows.Forms.Button();
+            this.nameLabel = new System.Windows.Forms.Label();
+            this.serverAddressLabel = new System.Windows.Forms.Label();
+            this.nameBox = new System.Windows.Forms.TextBox();
+            this.connectButton = new System.Windows.Forms.Button();
+            this.serverAddressBox = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
-            // label1
+            // nameLabel
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(12, 9);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(38, 13);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "Server";
-            this.label1.Click += new System.EventHandler(this.label1_Click);
+            this.nameLabel.AutoSize = true;
+            this.nameLabel.Location = new System.Drawing.Point(28, 25);
+            this.nameLabel.Name = "nameLabel";
+            this.nameLabel.Size = new System.Drawing.Size(67, 13);
+            this.nameLabel.TabIndex = 0;
+            this.nameLabel.Text = "Player Name";
             // 
-            // label2
+            // serverAddressLabel
             // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(170, 9);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(35, 13);
-            this.label2.TabIndex = 1;
-            this.label2.Text = "Name";
+            this.serverAddressLabel.AutoSize = true;
+            this.serverAddressLabel.Location = new System.Drawing.Point(317, 25);
+            this.serverAddressLabel.Name = "serverAddressLabel";
+            this.serverAddressLabel.Size = new System.Drawing.Size(79, 13);
+            this.serverAddressLabel.TabIndex = 1;
+            this.serverAddressLabel.Text = "Server Address";
             // 
-            // ServerTextbox
+            // nameBox
             // 
-            this.ServerTextbox.Location = new System.Drawing.Point(56, 6);
-            this.ServerTextbox.Name = "ServerTextbox";
-            this.ServerTextbox.Size = new System.Drawing.Size(100, 20);
-            this.ServerTextbox.TabIndex = 2;
+            this.nameBox.Location = new System.Drawing.Point(101, 22);
+            this.nameBox.Name = "nameBox";
+            this.nameBox.Size = new System.Drawing.Size(180, 20);
+            this.nameBox.TabIndex = 2;
             // 
-            // nameTextBox
+            // connectButton
             // 
-            this.nameTextBox.Location = new System.Drawing.Point(211, 6);
-            this.nameTextBox.Name = "nameTextBox";
-            this.nameTextBox.Size = new System.Drawing.Size(100, 20);
-            this.nameTextBox.TabIndex = 3;
+            this.connectButton.Location = new System.Drawing.Point(633, 19);
+            this.connectButton.Name = "connectButton";
+            this.connectButton.Size = new System.Drawing.Size(97, 24);
+            this.connectButton.TabIndex = 4;
+            this.connectButton.Text = "Connect";
+            this.connectButton.UseVisualStyleBackColor = true;
+            this.connectButton.Click += new System.EventHandler(this.connectButton_Click);
             // 
-            // ConnectButton
+            // serverAddressBox
             // 
-            this.ConnectButton.Location = new System.Drawing.Point(340, 3);
-            this.ConnectButton.Name = "ConnectButton";
-            this.ConnectButton.Size = new System.Drawing.Size(75, 23);
-            this.ConnectButton.TabIndex = 4;
-            this.ConnectButton.Text = "connect";
-            this.ConnectButton.UseVisualStyleBackColor = true;
-            this.ConnectButton.Click += new System.EventHandler(this.button1_Click);
+            this.serverAddressBox.Location = new System.Drawing.Point(402, 22);
+            this.serverAddressBox.Name = "serverAddressBox";
+            this.serverAddressBox.Size = new System.Drawing.Size(180, 20);
+            this.serverAddressBox.TabIndex = 5;
             // 
-            // Form
+            // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Controls.Add(this.ConnectButton);
-            this.Controls.Add(this.nameTextBox);
-            this.Controls.Add(this.ServerTextbox);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.label1);
-            this.Name = "Form";
+            this.Controls.Add(this.serverAddressBox);
+            this.Controls.Add(this.connectButton);
+            this.Controls.Add(this.nameBox);
+            this.Controls.Add(this.serverAddressLabel);
+            this.Controls.Add(this.nameLabel);
+            this.Name = "Form1";
             this.Text = "Form1";
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -97,11 +96,11 @@
 
         #endregion
 
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.TextBox ServerTextbox;
-        private System.Windows.Forms.TextBox nameTextBox;
-        private System.Windows.Forms.Button ConnectButton;
+        private System.Windows.Forms.Label nameLabel;
+        private System.Windows.Forms.Label serverAddressLabel;
+        private System.Windows.Forms.TextBox nameBox;
+        private System.Windows.Forms.Button connectButton;
+        private System.Windows.Forms.TextBox serverAddressBox;
     }
 }
 

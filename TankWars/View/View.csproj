@@ -79,5 +79,15 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\GameController\GameController.csproj">
+      <Project>{a524b2dc-eaa9-4fad-883c-b5773feae0a8}</Project>
+      <Name>GameController</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\NetworkController\NetworkController.csproj">
+      <Project>{faa6fb2f-f6e1-425b-b871-769e154dedc7}</Project>
+      <Name>NetworkController</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
