@@ -28,65 +28,65 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label1 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
-            this.textBox1 = new System.Windows.Forms.TextBox();
-            this.button1 = new System.Windows.Forms.Button();
-            this.textBox2 = new System.Windows.Forms.TextBox();
+            this.nameLabel = new System.Windows.Forms.Label();
+            this.serverAddressLabel = new System.Windows.Forms.Label();
+            this.nameBox = new System.Windows.Forms.TextBox();
+            this.connectButton = new System.Windows.Forms.Button();
+            this.serverAddressBox = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
-            // label1
+            // nameLabel
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(28, 25);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(67, 13);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "Player Name";
+            this.nameLabel.AutoSize = true;
+            this.nameLabel.Location = new System.Drawing.Point(28, 25);
+            this.nameLabel.Name = "nameLabel";
+            this.nameLabel.Size = new System.Drawing.Size(67, 13);
+            this.nameLabel.TabIndex = 0;
+            this.nameLabel.Text = "Player Name";
             // 
-            // label2
+            // serverAddressLabel
             // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(317, 25);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(79, 13);
-            this.label2.TabIndex = 1;
-            this.label2.Text = "Server Address";
+            this.serverAddressLabel.AutoSize = true;
+            this.serverAddressLabel.Location = new System.Drawing.Point(317, 25);
+            this.serverAddressLabel.Name = "serverAddressLabel";
+            this.serverAddressLabel.Size = new System.Drawing.Size(79, 13);
+            this.serverAddressLabel.TabIndex = 1;
+            this.serverAddressLabel.Text = "Server Address";
             // 
-            // textBox1
+            // nameBox
             // 
-            this.textBox1.Location = new System.Drawing.Point(101, 22);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(180, 20);
-            this.textBox1.TabIndex = 2;
+            this.nameBox.Location = new System.Drawing.Point(101, 22);
+            this.nameBox.Name = "nameBox";
+            this.nameBox.Size = new System.Drawing.Size(180, 20);
+            this.nameBox.TabIndex = 2;
             // 
-            // button1
+            // connectButton
             // 
-            this.button1.Location = new System.Drawing.Point(633, 19);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(97, 24);
-            this.button1.TabIndex = 4;
-            this.button1.Text = "Connect";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.connectButton.Location = new System.Drawing.Point(633, 19);
+            this.connectButton.Name = "connectButton";
+            this.connectButton.Size = new System.Drawing.Size(97, 24);
+            this.connectButton.TabIndex = 4;
+            this.connectButton.Text = "Connect";
+            this.connectButton.UseVisualStyleBackColor = true;
+            this.connectButton.Click += new System.EventHandler(this.connectButton_Click);
             // 
-            // textBox2
+            // serverAddressBox
             // 
-            this.textBox2.Location = new System.Drawing.Point(402, 22);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(180, 20);
-            this.textBox2.TabIndex = 5;
+            this.serverAddressBox.Location = new System.Drawing.Point(402, 22);
+            this.serverAddressBox.Name = "serverAddressBox";
+            this.serverAddressBox.Size = new System.Drawing.Size(180, 20);
+            this.serverAddressBox.TabIndex = 5;
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Controls.Add(this.textBox2);
-            this.Controls.Add(this.button1);
-            this.Controls.Add(this.textBox1);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.label1);
+            this.Controls.Add(this.serverAddressBox);
+            this.Controls.Add(this.connectButton);
+            this.Controls.Add(this.nameBox);
+            this.Controls.Add(this.serverAddressLabel);
+            this.Controls.Add(this.nameLabel);
             this.Name = "Form1";
             this.Text = "Form1";
             this.ResumeLayout(false);

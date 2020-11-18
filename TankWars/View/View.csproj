@@ -80,6 +80,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\GameController\GameController.csproj">
+      <Project>{A524B2DC-EAA9-4FAD-883C-B5773FEAE0A8}</Project>
+      <Name>GameController</Name>
+    </ProjectReference>
     <ProjectReference Include="..\NetworkController\NetworkController.csproj">
       <Project>{faa6fb2f-f6e1-425b-b871-769e154dedc7}</Project>
       <Name>NetworkController</Name>

@@ -1,4 +1,5 @@
-﻿using NetworkUtil;
+﻿using GameController;
+using NetworkUtil;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -7,6 +8,7 @@ using System.Drawing;
 using System.Linq;
 using System.Net.Sockets;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -33,9 +35,12 @@ namespace View
     //
     public partial class Form1 : Form
     {
+        GameController.GameController controller;
         public Form1()
         {
+
             InitializeComponent();
+            controller = new GameController.GameController();
         }
 
         private void connectButton_Click(object sender, EventArgs e)
@@ -45,23 +50,58 @@ namespace View
                 MessageBox.Show("Must fill out both Player Name and Server Address", "Error!",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-
-            //if server address contains a semicolon, we know its an ip 
-            else if (serverAddressBox.Text.Contains(":"))
-            {
-                string ip = serverAddressBox.Text.Substring(0, serverAddressBox.Text.IndexOf(':'));
-                int port = int.Parse(serverAddressBox.Text.Substring(serverAddressBox.Text.IndexOf(':') + 1));
-                //next create socket connection
-                //Socket connection = Networking.ConnectToServer.....
-            }
-
-            //if just host name, create socket connection with that
-            else
-            {
-                //Socket connection = Networking.ConnectToServer.....
-            }
+            controller.playerName = nameBox.Text;
+            controller.Connect(serverAddressBox.Text);
         }
 
 
+
+
+
+
+        public class DrawingPanel
+        {
+
+
+            // A delegate for DrawObjectWithTransform
+            // Methods matching this delegate can draw whatever they want using e  
+            public delegate void ObjectDrawer(object o, PaintEventArgs e);
+
+            /// <summary>
+            /// Helper method for DrawObjectWithTransform
+            /// </summary>
+            /// <param name="size">The world (and image) size</param>
+            /// <param name="w">The worldspace coordinate</param>
+            /// <returns></returns>
+            private static int WorldSpaceToImageSpace(int size, double w)
+            {
+                return (int)w + size / 2;
+            }
+
+            /// <summary>
+            /// This method performs a translation and rotation to drawn an object in the world.
+            /// </summary>
+            /// <param name="e">PaintEventArgs to access the graphics (for drawing)</param>
+            /// <param name="o">The object to draw</param>
+            /// <param name="worldSize">The size of one edge of the world (assuming the world is square)</param>
+            /// <param name="worldX">The X coordinate of the object in world space</param>
+            /// <param name="worldY">The Y coordinate of the object in world space</param>
+            /// <param name="angle">The orientation of the objec, measured in degrees clockwise from "up"</param>
+            /// <param name="drawer">The drawer delegate. After the transformation is applied, the delegate is invoked to draw whatever it wants</param>
+            private void DrawObjectWithTransform(PaintEventArgs e, object o, int worldSize, double worldX, double worldY, double angle, ObjectDrawer drawer)
+            {
+                // "push" the current transform
+                System.Drawing.Drawing2D.Matrix oldMatrix = e.Graphics.Transform.Clone();
+
+                int x = WorldSpaceToImageSpace(worldSize, worldX);
+                int y = WorldSpaceToImageSpace(worldSize, worldY);
+                e.Graphics.TranslateTransform(x, y);
+                e.Graphics.RotateTransform((float)angle);
+                drawer(o, e);
+
+                // "pop" the transform
+                e.Graphics.Transform = oldMatrix;
+            }
+        }
     }
 }
