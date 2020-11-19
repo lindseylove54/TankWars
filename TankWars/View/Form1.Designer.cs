@@ -1,4 +1,4 @@
-﻿namespace View
+﻿namespace TankWars
 {
     partial class Form1
     {
@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+
             this.nameLabel = new System.Windows.Forms.Label();
             this.serverAddressLabel = new System.Windows.Forms.Label();
             this.nameBox = new System.Windows.Forms.TextBox();

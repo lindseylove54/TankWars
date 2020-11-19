@@ -2,18 +2,26 @@
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using Tankwars;
 
-namespace GameController
+namespace TankWars
 {
     public class GameController
     {
+
+       private World theWorld;
+        public delegate void ServerUpdateHandler();
+        public event ServerUpdateHandler UpdateArrived;
 
        public string playerName
         {
             get; set;
         }
         
-
+        public GameController()
+        {
+            theWorld = new World();
+        }
         public void Connect(string address)
         {
             Networking.ConnectToServer(firstContact, address, 11000);
@@ -21,6 +29,7 @@ namespace GameController
 
         private void firstContact(SocketState state)
         {
+            
             state.OnNetworkAction = ReceiveStartup;
             Networking.Send(state.TheSocket, playerName + "\n");
             Networking.GetData(state);
@@ -51,10 +60,9 @@ namespace GameController
 
 
             //second string is world size
-            string worldSize = parts[1];
+            theWorld.worldSize =int.Parse(parts[1]);
 
-
-
+            
 
             //foreach wall... do something. 
             foreach (string p in parts)

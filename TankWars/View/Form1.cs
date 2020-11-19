@@ -10,8 +10,9 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Tankwars;
 
-namespace View
+namespace TankWars
 {
     /**
      * REQUIREMENTS FOR THE VIEW:
@@ -34,12 +35,70 @@ namespace View
     //
     public partial class Form1 : Form
     {
-        GameController.GameController controller;
-        public Form1()
-        {
+        private GameController controller;
+        private World theWorld;
+        private Button startButton;
+        private TextBox nameText;
+        private DrawingPanel drawingPanel;
 
+        private const int viewSize = 900;
+        private const int menuSize = 40;
+
+
+
+
+        public Form1(GameController ctrl)
+        {
             InitializeComponent();
-            controller = new GameController.GameController();
+            controller = ctrl;
+            theWorld = new World();
+            controller.UpdateArrived += OnFrame;
+
+            ClientSize = new Size(viewSize, viewSize + menuSize);
+
+
+            // Place and add the button
+            startButton = new Button();
+            startButton.Location = new Point(215, 5);
+            startButton.Size = new Size(70, 20);
+            startButton.Text = "Connect";
+            this.Controls.Add(startButton);
+
+            // Place and add the name label
+            nameLabel = new Label();
+            nameLabel.Text = "Name:";
+            nameLabel.Location = new Point(5, 10);
+            nameLabel.Size = new Size(40, 15);
+            this.Controls.Add(nameLabel);
+
+            // Place and add the name textbox
+            nameText = new TextBox();
+            nameText.Text = "player";
+            nameText.Location = new Point(50, 5);
+            nameText.Size = new Size(70, 15);
+            this.Controls.Add(nameText);
+
+            // Place and add the drawing panel
+            drawingPanel = new DrawingPanel(theWorld);
+            drawingPanel.Location = new Point(0, menuSize);
+            drawingPanel.Size = new Size(viewSize, viewSize);
+            this.Controls.Add(drawingPanel);
+
+            // Set up key and mouse handlers
+            //this.KeyDown += HandleKeyDown;
+            //this.KeyUp += HandleKeyUp;
+            //drawingPanel.MouseDown += HandleMouseDown;
+            //drawingPanel.MouseUp += HandleMouseUp;
+        }
+
+        /// <summary>
+        /// Handler for the controller's UpdateArrived event
+        /// </summary>
+        private void OnFrame()
+        {
+            //Invalidate this form and all its children
+            //This will cause the form to redraw as soon as it can
+            this.Invalidate(true);
         }
 
         private void connectButton_Click(object sender, EventArgs e)
@@ -53,14 +112,20 @@ namespace View
             controller.Connect(serverAddressBox.Text);
         }
 
+     
 
 
 
-
-
-        public class DrawingPanel
+        public class DrawingPanel : Panel
         {
 
+            private World theWorld;
+
+            public DrawingPanel(World w)
+            {
+                DoubleBuffered = true;
+                theWorld = w;
+            }
 
             // A delegate for DrawObjectWithTransform
             // Methods matching this delegate can draw whatever they want using e  
@@ -100,6 +165,16 @@ namespace View
 
                 // "pop" the transform
                 e.Graphics.Transform = oldMatrix;
+            }
+            private void worldDrawer(object o, PaintEventArgs e)
+            {
+                World world = o as World;
+                
+                Rectangle r = new Rectangle(-(world.worldSize / 2), (world.worldSize / 2), -world.worldSize, world.worldSize);
+                Bitmap image = new Bitmap(@"C:\Users\tyler\Desktop\TankWars\Images\Background.png");
+
+                e.Graphics.DrawImage(image, r);
+
             }
         }
     }
