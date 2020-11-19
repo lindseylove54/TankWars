@@ -42,6 +42,7 @@ namespace TankWars
         private TextBox serverText;
         private DrawingPanel drawingPanel;
         private Label nameLabel;
+        private Label serverLabel;
         private const int viewSize = 900;
         private const int menuSize = 70;
 
@@ -60,7 +61,7 @@ namespace TankWars
 
             // Place and add the button
             startButton = new Button();
-            startButton.Location = new Point(215, 5);
+            startButton.Location = new Point(250, 5);
             startButton.Size = new Size(70, 20);
             startButton.Text = "Connect";
             startButton.Click += connectButton_Click;
@@ -73,19 +74,27 @@ namespace TankWars
             nameLabel.Size = new Size(40, 15);
             this.Controls.Add(nameLabel);
 
+            //Place and add the server label
+            serverLabel = new Label();
+            serverLabel.Text = "Server:";
+            serverLabel.Location = new Point(125,10);
+            serverLabel.Size = new Size(40,15);
+            this.Controls.Add(serverLabel);
+
+
             // Place and add the server textbox
+            serverText = new TextBox();
+            serverText.Text = "localhost";
+            serverText.Location = new Point(170, 5);
+            serverText.Size = new Size(70, 15);
+            this.Controls.Add(serverText);
+
+            //Place and add the name textbox
             serverText = new TextBox();
             serverText.Text = "player";
             serverText.Location = new Point(50, 5);
             serverText.Size = new Size(70, 15);
-            this.Controls.Add(nameText);
-
-            //Plae and add the name textbox
-            nameText = new TextBox();
-            nameText.Text = "player";
-            nameText.Location = new Point(50, 5);
-            nameText.Size = new Size(70, 15);
-            this.Controls.Add(nameText);
+            this.Controls.Add(serverText);
 
 
             // Place and add the drawing panel

@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using TankWars;
 
-namespace View
+namespace TankWars
 {
     static class Program
     {
@@ -16,7 +17,9 @@ namespace View
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Form1());
+            GameController controller = new GameController();
+            Form1 theForm = new Form1(controller);
+            Application.Run(theForm);
         }
     }
 }
