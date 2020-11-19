@@ -1,5 +1,4 @@
-﻿using NetworkUtil;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -40,8 +39,9 @@ namespace TankWars
 
         private Button startButton;
         private TextBox nameText;
+        private TextBox serverText;
         private DrawingPanel drawingPanel;
-
+        private Label nameLabel;
         private const int viewSize = 900;
         private const int menuSize = 70;
 
@@ -73,12 +73,20 @@ namespace TankWars
             nameLabel.Size = new Size(40, 15);
             this.Controls.Add(nameLabel);
 
-            // Place and add the name textbox
+            // Place and add the server textbox
+            serverText = new TextBox();
+            serverText.Text = "player";
+            serverText.Location = new Point(50, 5);
+            serverText.Size = new Size(70, 15);
+            this.Controls.Add(nameText);
+
+            //Plae and add the name textbox
             nameText = new TextBox();
             nameText.Text = "player";
             nameText.Location = new Point(50, 5);
             nameText.Size = new Size(70, 15);
             this.Controls.Add(nameText);
+
 
             // Place and add the drawing panel
             drawingPanel = new DrawingPanel(theWorld);
@@ -105,16 +113,16 @@ namespace TankWars
 
         private void connectButton_Click(object sender, EventArgs e)
         {
-            if (nameBox.Text.Equals("") || serverAddressBox.Text.Equals(""))
+            if (nameText.Text.Equals("") || nameText.Text.Equals(""))
             {
                 MessageBox.Show("Must fill out both Player Name and Server Address", "Error!",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-            controller.playerName = nameBox.Text;
-            controller.Connect(serverAddressBox.Text);
+            controller.playerName = nameText.Text;
+            controller.Connect(serverText.Text);
         }
 
-     
+
 
 
 
@@ -171,7 +179,7 @@ namespace TankWars
             private void worldDrawer(object o, PaintEventArgs e)
             {
                 World world = o as World;
-                
+
                 Rectangle r = new Rectangle(-(world.worldSize / 2), (world.worldSize / 2), -world.worldSize, world.worldSize);
                 Bitmap image = new Bitmap(@"C:\Users\tyler\Desktop\TankWars\Images\Background.png");
 

@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{FEB428D4-6F0B-4FA7-92AC-7E5699ABD23F}</ProjectGuid>
+    <ProjectGuid>{28A7E07E-379D-4FAF-9E71-4454D30F87A0}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <RootNamespace>View</RootNamespace>
     <AssemblyName>View</AssemblyName>
@@ -54,9 +54,6 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="Form1.resx">
-      <DependentUpon>Form1.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -83,10 +80,6 @@
     <ProjectReference Include="..\GameController\GameController.csproj">
       <Project>{a524b2dc-eaa9-4fad-883c-b5773feae0a8}</Project>
       <Name>GameController</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\NetworkController\NetworkController.csproj">
-      <Project>{faa6fb2f-f6e1-425b-b871-769e154dedc7}</Project>
-      <Name>NetworkController</Name>
     </ProjectReference>
     <ProjectReference Include="..\World\World.csproj">
       <Project>{27a6b11d-2a07-43fd-8c41-8d7be32afe35}</Project>

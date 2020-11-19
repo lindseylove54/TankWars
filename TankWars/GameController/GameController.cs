@@ -10,7 +10,9 @@ namespace TankWars
     {
 
        private World theWorld;
+
         public delegate void ServerUpdateHandler();
+
         public event ServerUpdateHandler UpdateArrived;
 
        public string playerName
