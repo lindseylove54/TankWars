@@ -90,11 +90,11 @@ namespace TankWars
             this.Controls.Add(serverText);
 
             //Place and add the name textbox
-            serverText = new TextBox();
-            serverText.Text = "player";
-            serverText.Location = new Point(50, 5);
-            serverText.Size = new Size(70, 15);
-            this.Controls.Add(serverText);
+            nameText = new TextBox();
+            nameText.Text = "player";
+            nameText.Location = new Point(50, 5);
+            nameText.Size = new Size(70, 15);
+            this.Controls.Add(nameText);
 
 
             // Place and add the drawing panel
