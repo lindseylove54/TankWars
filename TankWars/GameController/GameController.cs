@@ -65,8 +65,7 @@ namespace GameController
             //foreach wall... do something. 
             foreach (string p in parts)
             {
-                //  remove it from the SocketState's growable buffer... check if this is needed
-                state.RemoveData(0, p.Length);
+
                 //default checks including the \n check
                 if (p.Length == 0)
                 {
