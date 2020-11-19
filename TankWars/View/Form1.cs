@@ -37,12 +37,13 @@ namespace TankWars
     {
         private GameController controller;
         private World theWorld;
+
         private Button startButton;
         private TextBox nameText;
         private DrawingPanel drawingPanel;
 
         private const int viewSize = 900;
-        private const int menuSize = 40;
+        private const int menuSize = 70;
 
 
 
@@ -62,6 +63,7 @@ namespace TankWars
             startButton.Location = new Point(215, 5);
             startButton.Size = new Size(70, 20);
             startButton.Text = "Connect";
+            startButton.Click += connectButton_Click;
             this.Controls.Add(startButton);
 
             // Place and add the name label
