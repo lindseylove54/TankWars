@@ -38,10 +38,11 @@ namespace TankWars
         [JsonProperty(PropertyName = "join")]
         private bool joined = false;
 
+        public Vector2D Location { get =>  location; set => location = value; }
+        public int TankID { get => tankID; set => tankID = value; }
+        public Vector2D Orientation { get => orientation; set => orientation = value; }
         public Tank(int id, double x, double y )
         {
-            tankID = id;
-            location = new Vector2D(x, y);
         }
     }
 }

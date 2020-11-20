@@ -54,6 +54,10 @@ namespace TankWars
             
             controller.UpdateArrived += OnFrame;
             controller.ConnectToView += connectFromController;
+            controller.TankReceived += tankReceived;
+            controller.connectID += playerIDReceived;
+
+
             ClientSize = new Size(viewSize, viewSize + menuSize);
 
 
@@ -119,11 +123,23 @@ namespace TankWars
             MethodInvoker invalidator = new MethodInvoker(() => this.Invalidate(true));
             this.Invoke(invalidator);
         }
-
+        /// <summary>
+        /// Delegate for the controller to inform the view that the players tank has been received. 
+        /// </summary>
+        private void tankReceived()
+        {
+            drawingPanel.tankReceived();
+        }
         private void connectFromController(World w)
         {
             drawingPanel.SetWorld(w);
         }
+        private void playerIDReceived(int id)
+        {
+            drawingPanel.setPlayerID(id);
+        }
+
+
         private void connectButton_Click(object sender, EventArgs e)
         {
             if (nameText.Text.Equals("") || nameText.Text.Equals(""))
@@ -145,11 +161,17 @@ namespace TankWars
             private World theWorld;
             Image walls;
             Image backGround;
+            Image DarkTank;
             public bool receivedWorld;
+            public bool receivedTank;
+            private int playerID;
+            private int wallX;
+            private int wallY;
             public DrawingPanel()
             {
                 walls = Image.FromFile("../../../Resources/Sprites/WallSprite.png"); 
                 backGround = Image.FromFile("../../../Resources/Sprites/Background.png");
+                DarkTank = Image.FromFile("../../../Resources/Sprites/DarkTank.png");
                 DoubleBuffered = true;
                 
             }
@@ -168,7 +190,6 @@ namespace TankWars
             {
                 return (int)w + size / 2;
             }
-
             /// <summary>
             /// This method performs a translation and rotation to drawn an object in the world.
             /// </summary>
@@ -179,6 +200,7 @@ namespace TankWars
             /// <param name="worldY">The Y coordinate of the object in world space</param>
             /// <param name="angle">The orientation of the objec, measured in degrees clockwise from "up"</param>
             /// <param name="drawer">The drawer delegate. After the transformation is applied, the delegate is invoked to draw whatever it wants</param>
+           
             private void DrawObjectWithTransform(PaintEventArgs e, object o, int worldSize, double worldX, double worldY, double angle, ObjectDrawer drawer)
             {
                 // "push" the current transform
@@ -194,70 +216,88 @@ namespace TankWars
                 e.Graphics.Transform = oldMatrix;
             }
             
+            private void tankDrawer(object o, PaintEventArgs e)
+            {
+                int tankWidth = 60;
+                Tank t = o as Tank;
+                Rectangle r = new Rectangle(-(tankWidth / 2), -(tankWidth / 2), tankWidth, tankWidth);
+                e.Graphics.DrawImage(DarkTank, r);
+                
+            }
+
             private void wallDrawer(object o, PaintEventArgs e)
             {
+                int wallWidth = 50;
                 Wall wall = o as Wall;
-                Rectangle r;
-                if(wall.P1.GetX() == wall.P2.GetX())
-                {
-                  if(wall.P1.GetY() > wall.P2.GetY())
-                    {
-                        double startPoint;
-                        for(startPoint =wall.P2.GetY(); startPoint < wall.P1.GetY();startPoint+= 50)
-                        {
-                            r = new Rectangle((int)wall.P1.GetX(), (int)startPoint, 50, 50);
-                            e.Graphics.DrawImage(walls, r);
-                        }
-                    }
-                    else
-                    {
-                        double startPoint;
-                        for (startPoint = wall.P1.GetY(); startPoint < wall.P2.GetY(); startPoint += 50)
-                        {
-                            r = new Rectangle((int)wall.P1.GetX(), (int)startPoint, 50, 50);
-                            e.Graphics.DrawImage(walls, r);
-                        }
-                    }
-                }
-                else
-                {
-                    if (wall.P1.GetX() > wall.P2.GetX())
-                    {
-                        double startPoint;
-                        for (startPoint = wall.P2.GetX(); startPoint < wall.P1.GetX(); startPoint += 50)
-                        {
-                            r = new Rectangle((int)startPoint, (int)wall.P1.GetY(), 50, 50);
-                            e.Graphics.DrawImage(walls, r);
-                        }
-                    }
-                    else
-                    {
-                        double startPoint;
-                        for (startPoint = wall.P1.GetX(); startPoint < wall.P2.GetX(); startPoint += 50)
-                        {
-                            r = new Rectangle((int)startPoint, (int)wall.P1.GetY(), 50, 50);
-                            e.Graphics.DrawImage(walls, r);
-                        }
-                    }
-                }
-                
-            //    e.Graphics.DrawImage(walls,r);
+                Rectangle r = new Rectangle(-(wallWidth / 2), -(wallWidth / 2), wallWidth, wallWidth);
+                e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
 
+                e.Graphics.DrawImage(walls, r);
             }
+
             protected override void OnPaint(PaintEventArgs e)
             {
-                if (receivedWorld == true)
+                if (receivedWorld == true && receivedTank == true)
                 {
+                    e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+
+                    double playerX = theWorld.Tanks[playerID].Location.GetX();
+                    double playerY = theWorld.Tanks[playerID].Location.GetY();
+
+                    // calculate view/world size ratio
+                    double ratio = (double)viewSize / (double)theWorld.worldSize;
+                    int halfSizeScaled = (int)(theWorld.worldSize / 2.0 * ratio);
+
+                    double inverseTranslateX = -WorldSpaceToImageSpace(theWorld.worldSize, playerX) + halfSizeScaled;
+                    double inverseTranslateY = -WorldSpaceToImageSpace(theWorld.worldSize, playerY) + halfSizeScaled;
+
+                    e.Graphics.TranslateTransform((float)inverseTranslateX, (float)inverseTranslateY);
+
+
+                    //draw the background
                     e.Graphics.DrawImage(backGround, 0, 0, theWorld.worldSize, theWorld.worldSize);
 
                     foreach (Wall wall in theWorld.Walls.Values)
                     {
-                        double x1 = wall.P1.GetX();
-                        double x2 = wall.P2.GetX();
-                        double y1 = wall.P1.GetY();
-                        double y2 = wall.P2.GetY();
-                          DrawObjectWithTransform(e, wall, theWorld.worldSize, (x1+x2)/2, (y1+y2) /2, 0, wallDrawer);
+                        if(wall.P1.GetX() == wall.P2.GetX())
+                        {
+                            wallX =(int) wall.P1.GetX();
+                            if (wall.P1.GetY() > wall.P2.GetY())
+                            {
+                                for(wallY = (int)wall.P2.GetY(); wallY <= wall.P1.GetY();wallY+= 50)
+                                {
+                                    DrawObjectWithTransform(e, wall, theWorld.worldSize, wallX, wallY, 0, wallDrawer);
+                                }
+                            }
+                            else
+                            {
+                                for (wallY = (int)wall.P1.GetY(); wallY <= wall.P2.GetY(); wallY += 50)
+                                {
+                                    DrawObjectWithTransform(e, wall, theWorld.worldSize, wallX, wallY, 0, wallDrawer);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            wallY = (int)wall.P1.GetY();
+                            if (wall.P1.GetX() > wall.P2.GetX())
+                            {
+                                for (wallX = (int)wall.P2.GetX(); wallX <= wall.P1.GetX(); wallX += 50)
+                                {
+                                    DrawObjectWithTransform(e, wall, theWorld.worldSize, wallX, wallY, 0, wallDrawer);
+                                }
+                            }
+                            else
+                            {
+                                for (wallX = (int)wall.P1.GetX(); wallX <= wall.P2.GetX(); wallX += 50)
+                                {
+                                    DrawObjectWithTransform(e, wall, theWorld.worldSize, wallX, wallY, 0, wallDrawer);
+                                }
+                            }
+                        }
                     }
+                    foreach(Tank tank in theWorld.Tanks.Values)
+                        DrawObjectWithTransform(e, tank, theWorld.worldSize, tank.Location.GetX(), tank.Location.GetY(), tank.Orientation.ToAngle(), tankDrawer);
 
                     base.OnPaint(e);
                 }
@@ -271,6 +311,14 @@ namespace TankWars
             {
                 theWorld = w;
                 receivedWorld = true;
+            }
+            public void tankReceived()
+            {
+                receivedTank = true;
+            }
+            public void setPlayerID(int id)
+            {
+                playerID = id;
             }
         }
     }

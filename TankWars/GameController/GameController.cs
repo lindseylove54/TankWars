@@ -15,9 +15,14 @@ namespace TankWars
 
         public delegate void ServerUpdateHandler();
         public delegate void ConnectWorldToView(World w);
-        public event ServerUpdateHandler UpdateArrived;
+        public delegate void TankReceivedFromServer();
+        public delegate void ConnectPlayerIDToView(int id);
 
+        public event ServerUpdateHandler UpdateArrived;
         public event ConnectWorldToView ConnectToView;
+        public event TankReceivedFromServer TankReceived;
+        public event ConnectPlayerIDToView connectID;
+
 
         bool playerIDReceived;
         bool WorldSizeReceived;
@@ -56,6 +61,7 @@ namespace TankWars
                 theWorld = new World(worldSize);
                 
                 ConnectToView(theWorld);
+                connectID(playerID);
                 state.OnNetworkAction = ReceiveWorld;
             }
 
@@ -85,21 +91,26 @@ namespace TankWars
                     Wall wall = JsonConvert.DeserializeObject<Wall>(s);
                     theWorld.Walls.Add(wall.wallID, wall);
                     state.RemoveData(0, s.Length);
+                    
                     continue;
                 }
-             //   token = obj["tank"];
-             //   if(token != null)
-             //   {
-              //      Tank tank = JsonConvert.DeserializeObject<Tank>(s);
-               //     theWorld.Tanks.Add(playerID, tank);
-               //     state.RemoveData(0, s.Length);
-                //    continue;
-               // }
+                token = obj["tank"];
+                if(token != null)
+                {
+                    Tank tank = JsonConvert.DeserializeObject<Tank>(s);
+                    if(!theWorld.Tanks.ContainsKey(tank.TankID))
+                    theWorld.Tanks.Add(tank.TankID, tank);
+                    TankReceived();
+                    state.RemoveData(0, s.Length);
+                    continue;
+                }
                 
 
             }
             //draw frame
             UpdateArrived();
+            //send game controller message
+            
             ;
         }
 

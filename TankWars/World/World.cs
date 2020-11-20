@@ -19,6 +19,8 @@ namespace TankWars
         {
             Walls = new Dictionary<int, Wall>();
             worldSize = size;
+            Tanks = new Dictionary<int, Tank>();
+
         }
        
     }
