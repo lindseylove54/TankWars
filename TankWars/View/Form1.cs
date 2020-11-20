@@ -53,7 +53,7 @@ namespace TankWars
             controller = ctrl;
             
             controller.UpdateArrived += OnFrame;
-
+            controller.ConnectToView += connectFromController;
             ClientSize = new Size(viewSize, viewSize + menuSize);
 
 
@@ -116,7 +116,8 @@ namespace TankWars
             //Invalidate this form and all its children
             //This will cause the form to redraw as soon as it can
             //method invoker
-            this.Invalidate(true);
+            MethodInvoker invalidator = new MethodInvoker(() => this.Invalidate(true));
+            this.Invoke(invalidator);
         }
 
         private void connectFromController(World w)
@@ -201,12 +202,12 @@ namespace TankWars
             protected override void OnPaint(PaintEventArgs e)
             {
 
-                e.Graphics.DrawImage(backGround, 0,0, 2000,2000);
+                e.Graphics.DrawImage(backGround, 0,0, theWorld.worldSize, theWorld.worldSize);
 
-               // foreach(Wall wall in theWorld.Walls.Values)
-                //{
-                  // DrawObjectWithTransform(e, wall, theWorld.worldSize, wall.P1, wall.P2, 0, wallDrawer);
-                //}
+                foreach(Wall wall in theWorld.Walls.Values)
+                {
+                 //  DrawObjectWithTransform(e, wall, theWorld.worldSize, wall.P1, wall.P2, 0, wallDrawer);
+                }
 
                 base.OnPaint(e);
             }
