@@ -54,6 +54,7 @@ namespace TankWars
             {
                 //create the world once the worldSize has been received. 
                 theWorld = new World(worldSize);
+                
                 ConnectToView(theWorld);
                 state.OnNetworkAction = ReceiveWorld;
             }
@@ -86,14 +87,14 @@ namespace TankWars
                     state.RemoveData(0, s.Length);
                     continue;
                 }
-                token = obj["tank"];
-                if(token != null)
-                {
-                    Tank tank = JsonConvert.DeserializeObject<Tank>(s);
-                    theWorld.Tanks.Add(playerID, tank);
-                    state.RemoveData(0, s.Length);
-                    continue;
-                }
+             //   token = obj["tank"];
+             //   if(token != null)
+             //   {
+              //      Tank tank = JsonConvert.DeserializeObject<Tank>(s);
+               //     theWorld.Tanks.Add(playerID, tank);
+               //     state.RemoveData(0, s.Length);
+                //    continue;
+               // }
                 
 
             }

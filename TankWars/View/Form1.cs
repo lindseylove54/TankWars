@@ -145,6 +145,7 @@ namespace TankWars
             private World theWorld;
             Image walls;
             Image backGround;
+            public bool receivedWorld;
             public DrawingPanel()
             {
                 walls = Image.FromFile("../../../Resources/Sprites/WallSprite.png"); 
@@ -201,21 +202,27 @@ namespace TankWars
             }
             protected override void OnPaint(PaintEventArgs e)
             {
-
-                e.Graphics.DrawImage(backGround, 0,0, theWorld.worldSize, theWorld.worldSize);
-
-                foreach(Wall wall in theWorld.Walls.Values)
+                if (receivedWorld == true)
                 {
-                 //  DrawObjectWithTransform(e, wall, theWorld.worldSize, wall.P1, wall.P2, 0, wallDrawer);
-                }
+                    e.Graphics.DrawImage(backGround, 0, 0, theWorld.worldSize, theWorld.worldSize);
 
-                base.OnPaint(e);
+                    foreach (Wall wall in theWorld.Walls.Values)
+                    {
+                        //  DrawObjectWithTransform(e, wall, theWorld.worldSize, wall.P1, wall.P2, 0, wallDrawer);
+                    }
+
+                    base.OnPaint(e);
+                }
+                else
+                {
+                    return;
+                }
             }
 
             public  void SetWorld(World w)
             {
                 theWorld = w;
-                
+                receivedWorld = true;
             }
         }
     }
