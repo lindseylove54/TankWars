@@ -85,6 +85,10 @@
       <Project>{a524b2dc-eaa9-4fad-883c-b5773feae0a8}</Project>
       <Name>GameController</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Vector2D\Vector2D.csproj">
+      <Project>{A0203D0C-346B-4F9C-8C87-74298D7D2B3B}</Project>
+      <Name>Vector2D</Name>
+    </ProjectReference>
     <ProjectReference Include="..\World\World.csproj">
       <Project>{27a6b11d-2a07-43fd-8c41-8d7be32afe35}</Project>
       <Name>World</Name>

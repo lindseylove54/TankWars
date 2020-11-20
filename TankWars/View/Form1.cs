@@ -196,8 +196,52 @@ namespace TankWars
             
             private void wallDrawer(object o, PaintEventArgs e)
             {
-              //  Rectangle r;
-               // e.Graphics.DrawImage(walls,r);
+                Wall wall = o as Wall;
+                Rectangle r;
+                if(wall.P1.GetX() == wall.P2.GetX())
+                {
+                  if(wall.P1.GetY() > wall.P2.GetY())
+                    {
+                        double startPoint;
+                        for(startPoint =wall.P2.GetY(); startPoint < wall.P1.GetY();startPoint+= 50)
+                        {
+                            r = new Rectangle((int)wall.P1.GetX(), (int)startPoint, 50, 50);
+                            e.Graphics.DrawImage(walls, r);
+                        }
+                    }
+                    else
+                    {
+                        double startPoint;
+                        for (startPoint = wall.P1.GetY(); startPoint < wall.P2.GetY(); startPoint += 50)
+                        {
+                            r = new Rectangle((int)wall.P1.GetX(), (int)startPoint, 50, 50);
+                            e.Graphics.DrawImage(walls, r);
+                        }
+                    }
+                }
+                else
+                {
+                    if (wall.P1.GetX() > wall.P2.GetX())
+                    {
+                        double startPoint;
+                        for (startPoint = wall.P2.GetX(); startPoint < wall.P1.GetX(); startPoint += 50)
+                        {
+                            r = new Rectangle((int)startPoint, (int)wall.P1.GetY(), 50, 50);
+                            e.Graphics.DrawImage(walls, r);
+                        }
+                    }
+                    else
+                    {
+                        double startPoint;
+                        for (startPoint = wall.P1.GetX(); startPoint < wall.P2.GetX(); startPoint += 50)
+                        {
+                            r = new Rectangle((int)startPoint, (int)wall.P1.GetY(), 50, 50);
+                            e.Graphics.DrawImage(walls, r);
+                        }
+                    }
+                }
+                
+            //    e.Graphics.DrawImage(walls,r);
 
             }
             protected override void OnPaint(PaintEventArgs e)
@@ -208,7 +252,11 @@ namespace TankWars
 
                     foreach (Wall wall in theWorld.Walls.Values)
                     {
-                        //  DrawObjectWithTransform(e, wall, theWorld.worldSize, wall.P1, wall.P2, 0, wallDrawer);
+                        double x1 = wall.P1.GetX();
+                        double x2 = wall.P2.GetX();
+                        double y1 = wall.P1.GetY();
+                        double y2 = wall.P2.GetY();
+                          DrawObjectWithTransform(e, wall, theWorld.worldSize, (x1+x2)/2, (y1+y2) /2, 0, wallDrawer);
                     }
 
                     base.OnPaint(e);
