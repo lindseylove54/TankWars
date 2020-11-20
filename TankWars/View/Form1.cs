@@ -9,7 +9,6 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using Tankwars;
 
 namespace TankWars
 {
@@ -35,7 +34,6 @@ namespace TankWars
     public partial class Form1 : Form
     {
         private GameController controller;
-        private World theWorld;
 
         private Button startButton;
         private TextBox nameText;
@@ -53,7 +51,7 @@ namespace TankWars
         {
             InitializeComponent();
             controller = ctrl;
-            theWorld = new World();
+            
             controller.UpdateArrived += OnFrame;
 
             ClientSize = new Size(viewSize, viewSize + menuSize);
@@ -98,7 +96,7 @@ namespace TankWars
 
 
             // Place and add the drawing panel
-            drawingPanel = new DrawingPanel(theWorld);
+            drawingPanel = new DrawingPanel();
             drawingPanel.Location = new Point(0, menuSize);
             drawingPanel.Size = new Size(viewSize, viewSize);
             this.Controls.Add(drawingPanel);
@@ -117,9 +115,14 @@ namespace TankWars
         {
             //Invalidate this form and all its children
             //This will cause the form to redraw as soon as it can
+            //method invoker
             this.Invalidate(true);
         }
 
+        private void connectFromController(World w)
+        {
+            drawingPanel.SetWorld(w);
+        }
         private void connectButton_Click(object sender, EventArgs e)
         {
             if (nameText.Text.Equals("") || nameText.Text.Equals(""))
@@ -139,11 +142,14 @@ namespace TankWars
         {
 
             private World theWorld;
-
-            public DrawingPanel(World w)
+            Image walls;
+            Image backGround;
+            public DrawingPanel()
             {
+                walls = Image.FromFile("../../../Resources/Sprites/WallSprite.png"); 
+                backGround = Image.FromFile("../../../Resources/Sprites/Background.png");
                 DoubleBuffered = true;
-                theWorld = w;
+                
             }
 
             // A delegate for DrawObjectWithTransform
@@ -185,15 +191,30 @@ namespace TankWars
                 // "pop" the transform
                 e.Graphics.Transform = oldMatrix;
             }
-            private void worldDrawer(object o, PaintEventArgs e)
+            
+            private void wallDrawer(object o, PaintEventArgs e)
             {
-                World world = o as World;
+              //  Rectangle r;
+               // e.Graphics.DrawImage(walls,r);
 
-                Rectangle r = new Rectangle(-(world.worldSize / 2), (world.worldSize / 2), -world.worldSize, world.worldSize);
-                Bitmap image = new Bitmap(@"C:\Users\tyler\Desktop\TankWars\Images\Background.png");
+            }
+            protected override void OnPaint(PaintEventArgs e)
+            {
 
-                e.Graphics.DrawImage(image, r);
+                e.Graphics.DrawImage(backGround, 0,0, 2000,2000);
 
+               // foreach(Wall wall in theWorld.Walls.Values)
+                //{
+                  // DrawObjectWithTransform(e, wall, theWorld.worldSize, wall.P1, wall.P2, 0, wallDrawer);
+                //}
+
+                base.OnPaint(e);
+            }
+
+            public  void SetWorld(World w)
+            {
+                theWorld = w;
+                
             }
         }
     }

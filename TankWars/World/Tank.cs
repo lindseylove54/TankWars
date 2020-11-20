@@ -9,7 +9,7 @@ namespace TankWars
     public class Tank
     {
         [JsonProperty(PropertyName = "tank")]
-        private int ID;
+        private int tankID;
 
         [JsonProperty(PropertyName = "loc")]
         private Vector2D location;
@@ -38,5 +38,10 @@ namespace TankWars
         [JsonProperty(PropertyName = "join")]
         private bool joined = false;
 
+        public Tank(int id, double x, double y )
+        {
+            tankID = id;
+            location = new Vector2D(x, y);
+        }
     }
 }

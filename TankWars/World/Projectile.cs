@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using TankWars;
 
-namespace Tankwars
+namespace TankWars
 {
     [JsonObject(MemberSerialization.OptIn)]
     class Projectile

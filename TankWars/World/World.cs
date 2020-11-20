@@ -4,15 +4,22 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 
-namespace Tankwars
+namespace TankWars
 {
     public class World
     {
-
+        public Dictionary<int, Wall> Walls;
+        public Dictionary<int, Tank> Tanks;
         public int worldSize
             {
-            get; set;
+            get;  private set;
             }
+
+        public World(int size)
+        {
+            Walls = new Dictionary<int, Wall>();
+            worldSize = size;
+        }
        
     }
 }
