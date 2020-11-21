@@ -226,6 +226,7 @@ namespace TankWars
             Image DarkTank;
             Image DarkTurret;
             Image RedStar;
+            Image BlueProj;
             public bool receivedWorld;
             public bool receivedTank;
             private int playerID;
@@ -238,6 +239,8 @@ namespace TankWars
                 DarkTank = Image.FromFile("../../../Resources/Sprites/DarkTank.png");
                 DarkTurret = Image.FromFile("../../../Resources/Sprites/DarkTurret.png");
                 RedStar = Image.FromFile("../../../Resources/Sprites/redStar.png");
+                RedStar = Image.FromFile("../../../Resources/Sprites/redStar.png");
+                BlueProj = Image.FromFile("../../../Resources/Sprites/shot_blue.png");
                 DoubleBuffered = true;
                 
             }
@@ -334,6 +337,17 @@ namespace TankWars
                 e.Graphics.DrawImage(RedStar, r);
             }
 
+            private void ProjectileDrawer(object o, PaintEventArgs e)
+            {
+                //what color do we want the projectiles?
+
+                int width = 30;
+                int height = 30;
+
+                e.Graphics.DrawImage(BlueProj, -width / 2, -height / 2, width, height);
+
+            }
+
             protected override void OnPaint(PaintEventArgs e)
             {
                 if (receivedWorld == true && receivedTank == true)
@@ -418,6 +432,12 @@ namespace TankWars
                         {
                             theWorld.PowerUps.Remove(power.powerID);
                         }
+
+                        foreach (Projectile proj in theWorld.Projectiles.Values)
+                        {
+                            DrawObjectWithTransform(e, proj, theWorld.worldSize, proj.Location.GetX(), proj.Location.GetY(), proj.Direction.ToAngle(), ProjectileDrawer);
+                        }
+
                     } 
                     base.OnPaint(e);
                 }
@@ -426,6 +446,8 @@ namespace TankWars
                     return;
                 }
             }
+
+            
 
             public  void SetWorld(World w)
             {

@@ -23,6 +23,9 @@ namespace TankWars
         private bool owner;
 
         public int beamID { get => ID; set => ID = value; }
+        public Vector2D Origin { get => org; set => org = value; }
+        public Vector2D Direction { get => dir; set => dir = value; }
+        public bool Owner { get => owner; set => owner = value; }
 
     }
 }

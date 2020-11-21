@@ -198,11 +198,15 @@ namespace TankWars
 
         public void HandleMouseClick(string mouseClick)
         {
-            if (mouseClick.Equals("left")) { 
-                //create/draw projectiles
+
+            if (mouseClick.Equals("left")) {
+
+                command.Fire = "main";
+
             } else if (mouseClick.Equals("right"))
             {
-                //create/draw beam
+                command.Fire = "alt";
+
             }
         }
     }
