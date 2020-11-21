@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Text.RegularExpressions;
 
 namespace TankWars
@@ -85,7 +86,7 @@ namespace TankWars
             {
                 if (s == "") continue;
 
-                if (!s.StartsWith("{")) break;
+                if (!s.EndsWith("\n")) continue ;
 
                 JObject obj = JObject.Parse(s);
 
@@ -103,8 +104,8 @@ namespace TankWars
                 if (token != null)
                 {
                     Tank tank = JsonConvert.DeserializeObject<Tank>(s);
-                    if (!theWorld.Tanks.ContainsKey(tank.TankID))
-                        theWorld.Tanks.Add(tank.TankID, tank);
+
+                    theWorld.Tanks[tank.TankID] = tank;
                     TankReceived();
                     state.RemoveData(0, s.Length);
                     continue;
@@ -186,6 +187,13 @@ namespace TankWars
             command.Moving = movement;
         }
 
-
+        public void HandleMouseMovement(Point p)
+        {
+            double x = p.X;
+            double y = p.Y;
+            Vector2D vector = new Vector2D(x, y);
+            vector.Normalize();
+            command.Tdir = vector;
+        }
     }
 }

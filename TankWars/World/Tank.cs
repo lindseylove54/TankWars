@@ -17,7 +17,7 @@ namespace TankWars
         private Vector2D orientation;
 
         [JsonProperty(PropertyName = "tdir")]
-        private Vector2D aiming = new Vector2D(0, -1);
+        private Vector2D aiming = new Vector2D();
 
         [JsonProperty(PropertyName = "name")]
         private string name;
@@ -40,7 +40,7 @@ namespace TankWars
         public Vector2D Location { get =>  location; set => location = value; }
         public int TankID { get => tankID; set => tankID = value; }
         public Vector2D Orientation { get => orientation; set => orientation = value; }
-        public Tank(int id, double x, double y )
+        public Tank( )
         {
         }
     }
