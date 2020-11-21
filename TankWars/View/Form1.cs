@@ -208,6 +208,7 @@ namespace TankWars
             Image backGround;
             Image DarkTank;
             Image DarkTurret;
+            Image RedStar;
             public bool receivedWorld;
             public bool receivedTank;
             private int playerID;
@@ -219,6 +220,7 @@ namespace TankWars
                 backGround = Image.FromFile("../../../Resources/Sprites/Background.png");
                 DarkTank = Image.FromFile("../../../Resources/Sprites/DarkTank.png");
                 DarkTurret = Image.FromFile("../../../Resources/Sprites/DarkTurret.png");
+                RedStar = Image.FromFile("../../../Resources/Sprites/redStar.png");
                 DoubleBuffered = true;
                 
             }
@@ -267,7 +269,7 @@ namespace TankWars
             {
                 int tankWidth = 60;
                 Tank t = o as Tank;
-                Rectangle r = new Rectangle(-(tankWidth / 2), -(tankWidth / 2), tankWidth, tankWidth);
+                Rectangle r = new Rectangle(-(tankWidth / 2 - 4), -(tankWidth / 2), tankWidth, tankWidth);
                 e.Graphics.DrawImage(DarkTank, r);
                 Rectangle turret = new Rectangle(-(tankWidth / 2), -(tankWidth / 2), tankWidth - 10 , tankWidth - 10);
 
@@ -282,6 +284,13 @@ namespace TankWars
                 e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
 
                 e.Graphics.DrawImage(walls, r);
+            }
+            private void powerDrawer(object o, PaintEventArgs e)
+            {
+                Powerup power = o as Powerup;
+                Rectangle r = new Rectangle(-20,-20,20,20);
+
+                e.Graphics.DrawImage(RedStar, r);
             }
 
             protected override void OnPaint(PaintEventArgs e)
@@ -350,6 +359,11 @@ namespace TankWars
                         foreach (Tank tank in theWorld.Tanks.Values)
                             //  if(tank hp == 0
                             DrawObjectWithTransform(e, tank, theWorld.worldSize, tank.Location.GetX(), tank.Location.GetY(), tank.Orientation.ToAngle(), tankDrawer);
+                    }
+                    foreach(Powerup power in theWorld.PowerUps.Values)
+                    {
+                        if (power.Died == true) continue;
+                        DrawObjectWithTransform(e, power, theWorld.worldSize, power.Location.GetX(), power.Location.GetY(), 0, powerDrawer);
                     }
                         base.OnPaint(e);
                     }
