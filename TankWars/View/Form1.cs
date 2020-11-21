@@ -269,9 +269,9 @@ namespace TankWars
             {
                 int tankWidth = 60;
                 Tank t = o as Tank;
-                Rectangle r = new Rectangle(-(tankWidth / 2 - 4), -(tankWidth / 2), tankWidth, tankWidth);
+                Rectangle r = new Rectangle(-(tankWidth / 2 ), -(tankWidth / 2), tankWidth, tankWidth);
                 e.Graphics.DrawImage(DarkTank, r);
-                Rectangle turret = new Rectangle(-(tankWidth / 2), -(tankWidth / 2), tankWidth - 10 , tankWidth - 10);
+                Rectangle turret = new Rectangle(-(tankWidth / 2 - 4), -(tankWidth / 2 - 4), tankWidth - 10 , tankWidth - 10);
 
                 e.Graphics.DrawImage(DarkTurret, turret);
             }

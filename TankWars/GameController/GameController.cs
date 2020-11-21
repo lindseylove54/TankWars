@@ -189,8 +189,8 @@ namespace TankWars
 
         public void HandleMouseMovement(Point p)
         {
-            double x = p.X;
-            double y = p.Y;
+            float x = p.X;
+            float y = p.Y;
             Vector2D vector = new Vector2D(x, y);
             vector.Normalize();
             command.Tdir = vector;
