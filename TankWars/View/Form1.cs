@@ -289,8 +289,6 @@ namespace TankWars
                 if (receivedWorld == true && receivedTank == true)
                 {
 
-                    lock (theWorld)
-                    {
                         e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
 
                         double playerX = theWorld.Tanks[playerID].Location.GetX();
@@ -304,7 +302,6 @@ namespace TankWars
                         double inverseTranslateY = -WorldSpaceToImageSpace(theWorld.worldSize, playerY) + halfSizeScaled;
 
                         e.Graphics.TranslateTransform((float)inverseTranslateX, (float)inverseTranslateY);
-                    }
 
                         //draw the background
                         e.Graphics.DrawImage(backGround, 0, 0, theWorld.worldSize, theWorld.worldSize);

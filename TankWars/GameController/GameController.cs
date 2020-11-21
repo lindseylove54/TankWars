@@ -101,15 +101,18 @@ namespace TankWars
                     continue;
                 }
                 token = obj["tank"];
-                if (token != null)
+                lock (theWorld)
                 {
-                    Tank tank = JsonConvert.DeserializeObject<Tank>(s);
+                    if (token != null)
+                    {
+                        Tank tank = JsonConvert.DeserializeObject<Tank>(s);
 
-                    theWorld.Tanks[tank.TankID] = tank;
-                    TankReceived();
-                    state.RemoveData(0, s.Length);
-                    continue;
-                } 
+                        theWorld.Tanks[tank.TankID] = tank;
+                        TankReceived();
+                        state.RemoveData(0, s.Length);
+                        continue;
+                    }
+                }
                 token = obj["proj"];
                 if (token != null)
                 {
@@ -144,7 +147,7 @@ namespace TankWars
             //send control command data
             string message = JsonConvert.SerializeObject(command);
             Networking.Send(state.TheSocket, message + "\n");
-            UpdateArrived();
+                UpdateArrived();
            Networking.GetData(state);
             //send game controller message
 
