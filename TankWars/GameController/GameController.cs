@@ -195,5 +195,15 @@ namespace TankWars
             vector.Normalize();
             command.Tdir = vector;
         }
+
+        public void HandleMouseClick(string mouseClick)
+        {
+            if (mouseClick.Equals("left")) { 
+                //create/draw projectiles
+            } else if (mouseClick.Equals("right"))
+            {
+                //create/draw beam
+            }
+        }
     }
 }

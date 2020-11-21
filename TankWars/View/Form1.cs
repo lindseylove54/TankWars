@@ -109,6 +109,7 @@ namespace TankWars
             this.KeyUp += HandleKeyUp;
             this.KeyDown += HandleKeyDown;
             drawingPanel.MouseMove+= MouseMoveHandler;
+            drawingPanel.MouseDown += HandleMouseClick;
             //drawingPanel.MouseUp += HandleMouseUp;
         }
 
@@ -199,6 +200,22 @@ namespace TankWars
 
         }
 
+        private void HandleMouseClick(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+                controller.HandleMouseClick("left");
+            }
+                
+            if (e.Button == MouseButtons.Right)
+            {
+                controller.HandleMouseClick("right");
+            }
+                
+
+
+        }
+
 
         public class DrawingPanel : Panel
         {
@@ -272,6 +289,32 @@ namespace TankWars
                 Rectangle r = new Rectangle(-(tankWidth / 2 ), -(tankWidth / 2), tankWidth, tankWidth);
                 e.Graphics.DrawImage(DarkTank, r);
                 Rectangle turret = new Rectangle(-(tankWidth / 2 - 4), -(tankWidth / 2 - 4), tankWidth - 10 , tankWidth - 10);
+
+
+                //**NEED TO FIX BUG WHERE HEALTH BAR MOVES ACCORDING TO TANK DIRECTION***\\
+                //pull out into a separate drawer???
+            
+                int rectWidth = 90;
+                int rectHeight = 15;
+                SolidBrush greenBrush = new SolidBrush(Color.LightGreen);
+                SolidBrush yellowBrush = new SolidBrush(Color.Yellow);
+                SolidBrush redBrush = new SolidBrush(Color.Red);
+                Pen pen = new Pen(Color.Black, 2);
+
+                e.Graphics.DrawRectangle(pen, -50, -60, rectWidth, rectHeight);
+                switch (t.HP)
+                {
+                    case 3:
+                        e.Graphics.FillRectangle(greenBrush, -50, -60 , rectWidth, rectHeight);
+                        break;
+                    case 2:
+                        e.Graphics.FillRectangle(yellowBrush, -50, -60 , rectWidth * 2/3, rectHeight);
+                        break;
+                    case 1:
+                        e.Graphics.FillRectangle(redBrush, -50, -60 , rectWidth * 1/3, rectHeight);
+                        break;
+                }
+                
             }
 
             private void wallDrawer(object o, PaintEventArgs e)
@@ -355,8 +398,11 @@ namespace TankWars
                     }
                     
                         foreach (Tank tank in theWorld.Tanks.Values)
-                            //  if(tank hp == 0
-                            DrawObjectWithTransform(e, tank, theWorld.worldSize, tank.Location.GetX(), tank.Location.GetY(), tank.Orientation.ToAngle(), tankDrawer);
+                            if(tank.HP != 0)
+                            {
+                                DrawObjectWithTransform(e, tank, theWorld.worldSize, tank.Location.GetX(), tank.Location.GetY(), tank.Orientation.ToAngle(), tankDrawer);
+                            }
+                            
 
                         List<Powerup> deadPower = new List<Powerup>();
                         foreach (Powerup power in theWorld.PowerUps.Values)
