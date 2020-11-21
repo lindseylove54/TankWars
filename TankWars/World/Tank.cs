@@ -40,6 +40,7 @@ namespace TankWars
         public Vector2D Location { get =>  location; set => location = value; }
         public int TankID { get => tankID; set => tankID = value; }
         public Vector2D Orientation { get => orientation; set => orientation = value; }
+        public Vector2D Aiming { get => aiming; set => aiming = value; }
         public Tank( )
         {
         }
