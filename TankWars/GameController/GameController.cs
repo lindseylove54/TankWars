@@ -80,29 +80,29 @@ namespace TankWars
             string totalData = state.GetData();
             string[] parts = Regex.Split(totalData, @"(?<=[\n])");
 
-
-            //receive frame
-            foreach (string s in parts)
+            lock (theWorld)
             {
-                if (s == "") continue;
-
-                if (!s.EndsWith("\n")) continue ;
-
-                JObject obj = JObject.Parse(s);
-
-                JToken token = obj["wall"];
-
-                if (token != null)
+                //receive frame
+                foreach (string s in parts)
                 {
-                    Wall wall = JsonConvert.DeserializeObject<Wall>(s);
-                    theWorld.Walls.Add(wall.wallID, wall);
-                    state.RemoveData(0, s.Length);
+                    if (s == "") continue;
 
-                    continue;
-                }
-                token = obj["tank"];
-                lock (theWorld)
-                {
+                    if (!s.EndsWith("\n")) continue;
+
+                    JObject obj = JObject.Parse(s);
+
+                    JToken token = obj["wall"];
+
+                    if (token != null)
+                    {
+                        Wall wall = JsonConvert.DeserializeObject<Wall>(s);
+                        theWorld.Walls.Add(wall.wallID, wall);
+                        state.RemoveData(0, s.Length);
+
+                        continue;
+                    }
+                    token = obj["tank"];
+
                     if (token != null)
                     {
                         Tank tank = JsonConvert.DeserializeObject<Tank>(s);
@@ -112,35 +112,32 @@ namespace TankWars
                         state.RemoveData(0, s.Length);
                         continue;
                     }
-                }
-                token = obj["proj"];
-                if (token != null)
-                {
-                    Projectile proj = JsonConvert.DeserializeObject<Projectile>(s);
-                    if (!theWorld.Projectiles.ContainsKey(proj.ProjID))
-                        theWorld.Projectiles.Add(proj.ProjID, proj);
-                    state.RemoveData(0, s.Length);
-                    continue;
-                }
-                token = obj["beam"];
-                if (token != null)
-                {
-                    Beam beam = JsonConvert.DeserializeObject<Beam>(s);
-                    if (!theWorld.Beams.ContainsKey(beam.beamID))
-                        theWorld.Beams.Add(beam.beamID, beam);
-                    state.RemoveData(0, s.Length);
-                    continue;
-                }
-                token = obj["power"];
-                if (token != null)
-                {
-                    Powerup power = JsonConvert.DeserializeObject<Powerup>(s);
-                    if (!theWorld.PowerUps.ContainsKey(power.powerID))
-                        theWorld.PowerUps.Add(power.powerID, power);
-                    state.RemoveData(0, s.Length);
-                    continue;
-                }
 
+                    token = obj["proj"];
+                    if (token != null)
+                    {
+                        Projectile proj = JsonConvert.DeserializeObject<Projectile>(s);
+                        theWorld.Projectiles[proj.ProjID] = proj;
+                        state.RemoveData(0, s.Length);
+                        continue;
+                    }
+                    token = obj["beam"];
+                    if (token != null)
+                    {
+                        Beam beam = JsonConvert.DeserializeObject<Beam>(s);
+                        theWorld.Beams[beam.beamID] = beam;
+                        state.RemoveData(0, s.Length);
+                        continue;
+                    }
+                    token = obj["power"];
+                    if (token != null)
+                    {
+                        Powerup power = JsonConvert.DeserializeObject<Powerup>(s);
+                        theWorld.PowerUps[power.powerID] = power;
+                        state.RemoveData(0, s.Length);
+                        continue;
+                    }
+                }
 
             }
             //draw frame

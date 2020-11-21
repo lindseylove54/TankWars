@@ -298,76 +298,85 @@ namespace TankWars
                 if (receivedWorld == true && receivedTank == true)
                 {
 
-                        e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+                    e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
 
-                        double playerX = theWorld.Tanks[playerID].Location.GetX();
-                        double playerY = theWorld.Tanks[playerID].Location.GetY();
+                    double playerX = theWorld.Tanks[playerID].Location.GetX();
+                    double playerY = theWorld.Tanks[playerID].Location.GetY();
 
-                        // calculate view/world size ratio
-                        double ratio = (double)viewSize / (double)theWorld.worldSize;
-                        int halfSizeScaled = (int)(theWorld.worldSize / 2.0 * ratio);
+                    // calculate view/world size ratio
+                    double ratio = (double)viewSize / (double)theWorld.worldSize;
+                    int halfSizeScaled = (int)(theWorld.worldSize / 2.0 * ratio);
 
-                        double inverseTranslateX = -WorldSpaceToImageSpace(theWorld.worldSize, playerX) + halfSizeScaled;
-                        double inverseTranslateY = -WorldSpaceToImageSpace(theWorld.worldSize, playerY) + halfSizeScaled;
+                    double inverseTranslateX = -WorldSpaceToImageSpace(theWorld.worldSize, playerX) + halfSizeScaled;
+                    double inverseTranslateY = -WorldSpaceToImageSpace(theWorld.worldSize, playerY) + halfSizeScaled;
 
-                        e.Graphics.TranslateTransform((float)inverseTranslateX, (float)inverseTranslateY);
+                    e.Graphics.TranslateTransform((float)inverseTranslateX, (float)inverseTranslateY);
 
-                        //draw the background
-                        e.Graphics.DrawImage(backGround, 0, 0, theWorld.worldSize, theWorld.worldSize);
-
+                    //draw the background
+                    e.Graphics.DrawImage(backGround, 0, 0, theWorld.worldSize, theWorld.worldSize);
+                    lock(theWorld)
+                    { 
                         foreach (Wall wall in theWorld.Walls.Values)
+                    {
+                        if (wall.P1.GetX() == wall.P2.GetX())
                         {
-                            if (wall.P1.GetX() == wall.P2.GetX())
+                            wallX = (int)wall.P1.GetX();
+                            if (wall.P1.GetY() > wall.P2.GetY())
                             {
-                                wallX = (int)wall.P1.GetX();
-                                if (wall.P1.GetY() > wall.P2.GetY())
+                                for (wallY = (int)wall.P2.GetY(); wallY <= wall.P1.GetY(); wallY += 50)
                                 {
-                                    for (wallY = (int)wall.P2.GetY(); wallY <= wall.P1.GetY(); wallY += 50)
-                                    {
-                                        DrawObjectWithTransform(e, wall, theWorld.worldSize, wallX, wallY, 0, wallDrawer);
-                                    }
-                                }
-                                else
-                                {
-                                    for (wallY = (int)wall.P1.GetY(); wallY <= wall.P2.GetY(); wallY += 50)
-                                    {
-                                        DrawObjectWithTransform(e, wall, theWorld.worldSize, wallX, wallY, 0, wallDrawer);
-                                    }
+                                    DrawObjectWithTransform(e, wall, theWorld.worldSize, wallX, wallY, 0, wallDrawer);
                                 }
                             }
                             else
                             {
-                                wallY = (int)wall.P1.GetY();
-                                if (wall.P1.GetX() > wall.P2.GetX())
+                                for (wallY = (int)wall.P1.GetY(); wallY <= wall.P2.GetY(); wallY += 50)
                                 {
-                                    for (wallX = (int)wall.P2.GetX(); wallX <= wall.P1.GetX(); wallX += 50)
-                                    {
-                                        DrawObjectWithTransform(e, wall, theWorld.worldSize, wallX, wallY, 0, wallDrawer);
-                                    }
-                                }
-                                else
-                                {
-                                    for (wallX = (int)wall.P1.GetX(); wallX <= wall.P2.GetX(); wallX += 50)
-                                    {
-                                        DrawObjectWithTransform(e, wall, theWorld.worldSize, wallX, wallY, 0, wallDrawer);
-                                    }
+                                    DrawObjectWithTransform(e, wall, theWorld.worldSize, wallX, wallY, 0, wallDrawer);
                                 }
                             }
                         }
-                    lock (theWorld)
-                    {
+                        else
+                        {
+                            wallY = (int)wall.P1.GetY();
+                            if (wall.P1.GetX() > wall.P2.GetX())
+                            {
+                                for (wallX = (int)wall.P2.GetX(); wallX <= wall.P1.GetX(); wallX += 50)
+                                {
+                                    DrawObjectWithTransform(e, wall, theWorld.worldSize, wallX, wallY, 0, wallDrawer);
+                                }
+                            }
+                            else
+                            {
+                                for (wallX = (int)wall.P1.GetX(); wallX <= wall.P2.GetX(); wallX += 50)
+                                {
+                                    DrawObjectWithTransform(e, wall, theWorld.worldSize, wallX, wallY, 0, wallDrawer);
+                                }
+                            }
+                        }
+                    }
+                    
                         foreach (Tank tank in theWorld.Tanks.Values)
                             //  if(tank hp == 0
                             DrawObjectWithTransform(e, tank, theWorld.worldSize, tank.Location.GetX(), tank.Location.GetY(), tank.Orientation.ToAngle(), tankDrawer);
+
+                        List<Powerup> deadPower = new List<Powerup>();
+                        foreach (Powerup power in theWorld.PowerUps.Values)
+                        {
+                            
+                            if(power.Died == true)
+                            {
+                                deadPower.Add(power);
+                            }
+                            DrawObjectWithTransform(e, power, theWorld.worldSize, power.Location.GetX(), power.Location.GetY(), 0, powerDrawer);
+                        }
+                        foreach(Powerup power in deadPower)
+                        {
+                            theWorld.PowerUps.Remove(power.powerID);
+                        }
                     }
-                    foreach(Powerup power in theWorld.PowerUps.Values)
-                    {
-                        if (power.Died == true) continue;
-                        DrawObjectWithTransform(e, power, theWorld.worldSize, power.Location.GetX(), power.Location.GetY(), 0, powerDrawer);
-                    }
-                        base.OnPaint(e);
-                    }
-                
+                    base.OnPaint(e);
+                }
                 else
                 {
                     return;
