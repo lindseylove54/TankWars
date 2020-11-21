@@ -374,7 +374,7 @@ namespace TankWars
                         {
                             theWorld.PowerUps.Remove(power.powerID);
                         }
-                    }
+                    } 
                     base.OnPaint(e);
                 }
                 else
