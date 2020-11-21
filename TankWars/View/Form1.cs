@@ -348,11 +348,8 @@ namespace TankWars
                     lock (theWorld)
                     {
                         foreach (Tank tank in theWorld.Tanks.Values)
-                            if(tank.HP != 0)
-                            {
-                                DrawObjectWithTransform(e, tank, theWorld.worldSize, tank.Location.GetX(), tank.Location.GetY(), tank.Orientation.ToAngle(), tankDrawer);
-                            } 
-                            
+                            //  if(tank hp == 0
+                            DrawObjectWithTransform(e, tank, theWorld.worldSize, tank.Location.GetX(), tank.Location.GetY(), tank.Orientation.ToAngle(), tankDrawer);
                     }
                         base.OnPaint(e);
                     }
