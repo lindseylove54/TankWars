@@ -4,7 +4,6 @@ using TankWars;
 
 namespace TankWars
 {
-    //Not Finished
     [JsonObject(MemberSerialization.OptIn)]
     public class Tank
     {

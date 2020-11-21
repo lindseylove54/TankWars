@@ -22,8 +22,9 @@ namespace TankWars
         public event ConnectWorldToView ConnectToView;
         public event TankReceivedFromServer TankReceived;
         public event ConnectPlayerIDToView connectID;
+        
 
-
+        ControlCommand command;
         bool playerIDReceived;
         bool WorldSizeReceived;
         public string playerName
@@ -36,6 +37,7 @@ namespace TankWars
         
         public GameController()
         {
+            command = new ControlCommand();
         }
 
 
@@ -82,6 +84,9 @@ namespace TankWars
             foreach (string s in parts)
             {
                 if (s == "") continue;
+
+                if (!s.StartsWith("{")) break;
+
                 JObject obj = JObject.Parse(s);
 
                 JToken token = obj["wall"];
@@ -91,26 +96,57 @@ namespace TankWars
                     Wall wall = JsonConvert.DeserializeObject<Wall>(s);
                     theWorld.Walls.Add(wall.wallID, wall);
                     state.RemoveData(0, s.Length);
-                    
+
                     continue;
                 }
                 token = obj["tank"];
-                if(token != null)
+                if (token != null)
                 {
                     Tank tank = JsonConvert.DeserializeObject<Tank>(s);
-                    if(!theWorld.Tanks.ContainsKey(tank.TankID))
-                    theWorld.Tanks.Add(tank.TankID, tank);
+                    if (!theWorld.Tanks.ContainsKey(tank.TankID))
+                        theWorld.Tanks.Add(tank.TankID, tank);
                     TankReceived();
                     state.RemoveData(0, s.Length);
                     continue;
+                } 
+                token = obj["proj"];
+                if (token != null)
+                {
+                    Projectile proj = JsonConvert.DeserializeObject<Projectile>(s);
+                    if (!theWorld.Projectiles.ContainsKey(proj.ProjID))
+                        theWorld.Projectiles.Add(proj.ProjID, proj);
+                    state.RemoveData(0, s.Length);
+                    continue;
                 }
-                
+                token = obj["beam"];
+                if (token != null)
+                {
+                    Beam beam = JsonConvert.DeserializeObject<Beam>(s);
+                    if (!theWorld.Beams.ContainsKey(beam.beamID))
+                        theWorld.Beams.Add(beam.beamID, beam);
+                    state.RemoveData(0, s.Length);
+                    continue;
+                }
+                token = obj["power"];
+                if (token != null)
+                {
+                    Powerup power = JsonConvert.DeserializeObject<Powerup>(s);
+                    if (!theWorld.PowerUps.ContainsKey(power.powerID))
+                        theWorld.PowerUps.Add(power.powerID, power);
+                    state.RemoveData(0, s.Length);
+                    continue;
+                }
+
 
             }
             //draw frame
+            //send control command data
+            string message = JsonConvert.SerializeObject(command);
+            Networking.Send(state.TheSocket, message + "\n");
             UpdateArrived();
+           Networking.GetData(state);
             //send game controller message
-            
+
             ;
         }
 
@@ -129,14 +165,14 @@ namespace TankWars
             {
                 playerID = result;
                 playerIDReceived = true;
-                state.RemoveData(0, parts[0].Length);
+                state.RemoveData(0, parts[0].Length );
             }
 
             if(int.TryParse(parts[1], out int size))
             {
                 worldSize = size;
                 WorldSizeReceived = true;
-                state.RemoveData(0, parts[1].Length);
+                state.RemoveData(0, parts[1].Length );
             }
 
             return WorldSizeReceived && playerIDReceived;
@@ -145,7 +181,10 @@ namespace TankWars
 
 
 
-
+        public void HandleMoveRequest(string movement)
+        {
+            command.Moving = movement;
+        }
 
 
     }

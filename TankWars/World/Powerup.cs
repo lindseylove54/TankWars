@@ -7,7 +7,7 @@ using TankWars;
 namespace TankWars
 {
     [JsonObject(MemberSerialization.OptIn)]
-    class Powerup
+   public class Powerup
     {
 
         [JsonProperty(PropertyName = "power")]

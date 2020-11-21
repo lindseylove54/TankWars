@@ -2,12 +2,11 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using TankWars;
 
 namespace TankWars
 {
     [JsonObject(MemberSerialization.OptIn)]
-    class Projectile
+   public class Projectile
     {
 
         [JsonProperty(PropertyName = "proj")]
@@ -25,7 +24,7 @@ namespace TankWars
         [JsonProperty]
         private int owner;
 
-        public int Proj { get => ID; set => ID = value; }
+        public int ProjID { get => ID; set => ID = value; }
         public Vector2D Location { get { return new Vector2D(loc); } set => loc = value; }
         public Vector2D Direction { get { return new Vector2D(dir); } set => dir = value; }
         public bool Died { get => died; set => died = value; }

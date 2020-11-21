@@ -23,9 +23,6 @@ namespace TankWars
         public Vector2D P1 { get => p1; set => p1 = value; }
         public Vector2D P2 { get => p2; set => p2 = value; }
 
-        public Wall()
-        {
-            
-        }
+        
     }
 }

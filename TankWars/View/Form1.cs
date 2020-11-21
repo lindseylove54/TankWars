@@ -107,13 +107,13 @@ namespace TankWars
 
             // Set up key and mouse handlers
             //this.KeyDown += HandleKeyDown;
-            //this.KeyUp += HandleKeyUp;
+            this.KeyDown += HandleKeyDown;
             //drawingPanel.MouseDown += HandleMouseDown;
             //drawingPanel.MouseUp += HandleMouseUp;
         }
 
         /// <summary>
-        /// Handler for the controller's UpdateArrived event
+        /// Handler for the controller's UpdateArrived eventw
         /// </summary>
         private void OnFrame()
         {
@@ -149,10 +149,20 @@ namespace TankWars
             }
             controller.playerName = nameText.Text;
             controller.Connect(serverText.Text);
+            startButton.Enabled = false;
+            nameText.Enabled = false;
+            serverText.Enabled = false;
         }
 
 
-
+        private void HandleKeyDown(object sender, KeyEventArgs e)
+        {
+            if(e.KeyCode == Keys.W)
+            {
+                controller.HandleMoveRequest("up");
+            }
+            e.Handled = true;
+        }
 
 
         public class DrawingPanel : Panel
@@ -239,6 +249,7 @@ namespace TankWars
             {
                 if (receivedWorld == true && receivedTank == true)
                 {
+                    
                     e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
 
                     double playerX = theWorld.Tanks[playerID].Location.GetX();
