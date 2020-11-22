@@ -11,8 +11,8 @@ namespace TankWars
     public class GameController
     {
 
-       private World theWorld;
-       
+        private World theWorld;
+
 
         public delegate void ServerUpdateHandler();
         public delegate void ConnectWorldToView(World w);
@@ -23,7 +23,7 @@ namespace TankWars
         public event ConnectWorldToView ConnectToView;
         public event TankReceivedFromServer TankReceived;
         public event ConnectPlayerIDToView connectID;
-        
+
 
         ControlCommand command;
         bool playerIDReceived;
@@ -35,7 +35,7 @@ namespace TankWars
 
         private int worldSize;
         private int playerID;
-        
+
         public GameController()
         {
             command = new ControlCommand();
@@ -49,7 +49,7 @@ namespace TankWars
 
         private void firstContact(SocketState state)
         {
-            
+
             state.OnNetworkAction = ReceiveStartup;
             Networking.Send(state.TheSocket, playerName + "\n");
             Networking.GetData(state);
@@ -58,11 +58,11 @@ namespace TankWars
         private void ReceiveStartup(SocketState state)
         {
             //extract data
-           if(ProcessStartupData(state))
+            if (ProcessStartupData(state))
             {
                 //create the world once the worldSize has been received. 
                 theWorld = new World(worldSize);
-                
+
                 ConnectToView(theWorld);
                 connectID(playerID);
                 state.OnNetworkAction = ReceiveWorld;
@@ -144,8 +144,8 @@ namespace TankWars
             //send control command data
             string message = JsonConvert.SerializeObject(command);
             Networking.Send(state.TheSocket, message + "\n");
-                UpdateArrived();
-           Networking.GetData(state);
+            UpdateArrived();
+            Networking.GetData(state);
             //send game controller message
 
             ;
@@ -162,22 +162,22 @@ namespace TankWars
             string[] parts = Regex.Split(totalData, @"(?<=[\n])");
             if (parts.Length < 2) return false;
 
-            if(int.TryParse(parts[0], out int result))
+            if (int.TryParse(parts[0], out int result))
             {
                 playerID = result;
                 playerIDReceived = true;
-                state.RemoveData(0, parts[0].Length );
+                state.RemoveData(0, parts[0].Length);
             }
 
-            if(int.TryParse(parts[1], out int size))
+            if (int.TryParse(parts[1], out int size))
             {
                 worldSize = size;
                 WorldSizeReceived = true;
-                state.RemoveData(0, parts[1].Length );
+                state.RemoveData(0, parts[1].Length);
             }
 
             return WorldSizeReceived && playerIDReceived;
-           
+
         }
 
 
@@ -194,6 +194,22 @@ namespace TankWars
             Vector2D vector = new Vector2D(x, y);
             vector.Normalize();
             command.Tdir = vector;
+        }
+
+        public void HandleMouseClick(string mouseClick)
+        {
+
+            if (mouseClick.Equals("left"))
+            {
+
+                command.Fire = "main";
+
+            }
+            else if (mouseClick.Equals("right"))
+            {
+                command.Fire = "alt";
+
+            }
         }
     }
 }
