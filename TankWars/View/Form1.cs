@@ -347,6 +347,12 @@ namespace TankWars
                 e.Graphics.DrawImage(BlueProj, -width / 2, -height / 2, width, height);
 
             }
+            private void turretDrawer(object o, PaintEventArgs e)
+            {
+                int tankWidth = 60;
+                Rectangle r = new Rectangle(-(tankWidth / 2), -(tankWidth / 2), tankWidth, tankWidth);
+                e.Graphics.DrawImage(DarkTurret, r);
+            }
 
             protected override void OnPaint(PaintEventArgs e)
             {
@@ -415,6 +421,7 @@ namespace TankWars
                         foreach (Tank tank in theWorld.Tanks.Values)
                         {
                             DrawObjectWithTransform(e, tank, theWorld.worldSize, tank.Location.GetX(), tank.Location.GetY(), tank.Orientation.ToAngle(), tankDrawer);
+                            DrawObjectWithTransform(e, tank, theWorld.worldSize, tank.Location.GetX(), tank.Location.GetY(), tank.Aiming.ToAngle(), turretDrawer);
 
                         }
 
