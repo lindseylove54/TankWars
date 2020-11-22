@@ -34,7 +34,6 @@ namespace TankWars
     public partial class Form1 : Form
     {
         private GameController controller;
-
         private Button startButton;
         private TextBox nameText;
         private TextBox serverText;
@@ -138,8 +137,6 @@ namespace TankWars
         {
             drawingPanel.setPlayerID(id);
         }
-
-
         private void connectButton_Click(object sender, EventArgs e)
         {
             if (nameText.Text.Equals("") || nameText.Text.Equals(""))
@@ -153,7 +150,6 @@ namespace TankWars
             nameText.Enabled = false;
             serverText.Enabled = false;
         }
-
         private void MouseMoveHandler(object sender, MouseEventArgs e)
         {
             controller.HandleMouseMovement(e.Location);
@@ -249,7 +245,6 @@ namespace TankWars
             /// <param name="worldY">The Y coordinate of the object in world space</param>
             /// <param name="angle">The orientation of the objec, measured in degrees clockwise from "up"</param>
             /// <param name="drawer">The drawer delegate. After the transformation is applied, the delegate is invoked to draw whatever it wants</param>
-           
             private void DrawObjectWithTransform(PaintEventArgs e, object o, int worldSize, double worldX, double worldY, double angle, ObjectDrawer drawer)
             {
                 // "push" the current transform
@@ -264,7 +259,6 @@ namespace TankWars
                 // "pop" the transform
                 e.Graphics.Transform = oldMatrix;
             }
-            
             private void tankDrawer(object o, PaintEventArgs e)
             {
                 int tankWidth = 60;
@@ -273,7 +267,6 @@ namespace TankWars
                 e.Graphics.DrawImage(DarkTank, r);
                 Rectangle turret = new Rectangle(-(tankWidth / 2 - 4), -(tankWidth / 2 - 4), tankWidth - 10 , tankWidth - 10);
             }
-
             private void wallDrawer(object o, PaintEventArgs e)
             {
                 int wallWidth = 50;
@@ -290,7 +283,6 @@ namespace TankWars
 
                 e.Graphics.DrawImage(RedStar, r);
             }
-
             protected override void OnPaint(PaintEventArgs e)
             {
                 if (receivedWorld == true && receivedTank == true)
@@ -380,7 +372,6 @@ namespace TankWars
                     return;
                 }
             }
-
             public  void SetWorld(World w)
             {
                 theWorld = w;
@@ -397,3 +388,4 @@ namespace TankWars
         }
     }
 }
+
