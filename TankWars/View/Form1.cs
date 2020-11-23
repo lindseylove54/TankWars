@@ -149,6 +149,7 @@ namespace TankWars
             }
             controller.playerName = nameText.Text;
             controller.Connect(serverText.Text);
+            drawingPanel.setPlayerName(nameText.Text);
             startButton.Enabled = false;
             nameText.Enabled = false;
             serverText.Enabled = false;
@@ -237,6 +238,7 @@ namespace TankWars
             private int playerID;
             private int wallX;
             private int wallY;
+            private string playerName;
             public DrawingPanel()
             {
                 walls = Image.FromFile("../../../Resources/Sprites/WallSprite.png");
@@ -299,31 +301,8 @@ namespace TankWars
                 Rectangle r = new Rectangle(-(tankWidth / 2), -(tankWidth / 2), tankWidth, tankWidth);
                 e.Graphics.DrawImage(DarkTank, r);
                 Rectangle turret = new Rectangle(-(tankWidth / 2 - 4), -(tankWidth / 2 - 4), tankWidth - 10, tankWidth - 10);
+                
 
-
-                //**NEED TO FIX BUG WHERE HEALTH BAR MOVES ACCORDING TO TANK DIRECTION***\\
-                //pull out into a separate drawer???
-
-                int rectWidth = 90;
-                int rectHeight = 15;
-                SolidBrush greenBrush = new SolidBrush(Color.LightGreen);
-                SolidBrush yellowBrush = new SolidBrush(Color.Yellow);
-                SolidBrush redBrush = new SolidBrush(Color.Red);
-                Pen pen = new Pen(Color.Black, 2);
-
-                e.Graphics.DrawRectangle(pen, -50, -60, rectWidth, rectHeight);
-                switch (t.Health)
-                {
-                    case 3:
-                        e.Graphics.FillRectangle(greenBrush, -50, -60, rectWidth, rectHeight);
-                        break;
-                    case 2:
-                        e.Graphics.FillRectangle(yellowBrush, -50, -60, rectWidth * 2 / 3, rectHeight);
-                        break;
-                    case 1:
-                        e.Graphics.FillRectangle(redBrush, -50, -60, rectWidth * 1 / 3, rectHeight);
-                        break;
-                }
 
             }
 
@@ -364,6 +343,36 @@ namespace TankWars
             {
                 Rectangle r = new Rectangle(-25, -25, 50, 50);
                 e.Graphics.DrawImage(Explosion, r);
+            }
+            private void underTankDrawer(object o, PaintEventArgs e)
+            {
+                Tank t = o as Tank;
+                int rectWidth = 90;
+                int rectHeight = 15;
+                string drawString = playerName + ":" + " " + t.PlayerScore;
+                SolidBrush greenBrush = new SolidBrush(Color.LightGreen);
+                SolidBrush yellowBrush = new SolidBrush(Color.Yellow);
+                SolidBrush redBrush = new SolidBrush(Color.Red);
+                Pen pen = new Pen(Color.Black, 2);
+
+                Font font = new Font("Arial", 12);
+                SolidBrush brush = new SolidBrush(Color.Black);
+
+                e.Graphics.DrawRectangle(pen, -50, -60, rectWidth, rectHeight);
+                e.Graphics.DrawString(drawString, font, brush, -50, -40);
+                switch (t.Health)
+                {
+                    case 3:
+                        e.Graphics.FillRectangle(greenBrush, -50, -60, rectWidth, rectHeight);
+                        break;
+                    case 2:
+                        e.Graphics.FillRectangle(yellowBrush, -50, -60, rectWidth * 2 / 3, rectHeight);
+                        break;
+                    case 1:
+                        e.Graphics.FillRectangle(redBrush, -50, -60, rectWidth * 1 / 3, rectHeight);
+                        break;
+                }
+
             }
             protected override void OnPaint(PaintEventArgs e)
             {
@@ -439,6 +448,7 @@ namespace TankWars
                             else if (tank.Disconnected == true) { disconnectedTank.Add(tank); continue; }
                             DrawObjectWithTransform(e, tank, theWorld.worldSize, tank.Location.GetX(), tank.Location.GetY(), tank.Orientation.ToAngle(), tankDrawer);
                             DrawObjectWithTransform(e, tank, theWorld.worldSize, tank.Location.GetX(), tank.Location.GetY(), tank.Aiming.ToAngle(), turretDrawer);
+                            DrawObjectWithTransform(e, tank, theWorld.worldSize, tank.Location.GetX() , tank.Location.GetY()+ 100, 0, underTankDrawer);
 
                         }
                         foreach(Tank deadTank in disconnectedTank)
@@ -498,6 +508,11 @@ namespace TankWars
             public void setPlayerID(int id)
             {
                 playerID = id;
+            }
+            
+            public void setPlayerName(string name)
+            {
+                playerName = name;
             }
         }
     }

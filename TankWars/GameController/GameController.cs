@@ -140,13 +140,12 @@ namespace TankWars
                 }
 
             }
-            //draw frame
             //send control command data
             string message = JsonConvert.SerializeObject(command);
             Networking.Send(state.TheSocket, message + "\n");
+            //draw frame
             UpdateArrived();
             Networking.GetData(state);
-            //send game controller message
 
             ;
         }
