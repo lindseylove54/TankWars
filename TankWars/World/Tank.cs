@@ -22,8 +22,8 @@ namespace TankWars
         [JsonProperty(PropertyName = "name")]
         private string name;
 
-        //[JsonProperty(PropertyName = "hp")]
-        //private int hitPoints = Constants.MaxHP;
+        [JsonProperty(PropertyName = "hp")]
+        private int hitPoints = 3;
 
         [JsonProperty(PropertyName = "score")]
         private int score = 0;
@@ -41,6 +41,8 @@ namespace TankWars
         public int TankID { get => tankID; set => tankID = value; }
         public Vector2D Orientation { get => orientation; set => orientation = value; }
         public Vector2D Aiming { get => aiming; set => aiming = value; }
+        public int Health { get => hitPoints; set => hitPoints = value; }
+        public bool Disconnected { get => disconnected; set => disconnected = value; }
         public Tank( )
         {
         }

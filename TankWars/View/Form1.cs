@@ -57,7 +57,6 @@ namespace TankWars
             controller.TankReceived += tankReceived;
             controller.connectID += playerIDReceived;
 
-
             ClientSize = new Size(viewSize, viewSize + menuSize);
 
 
@@ -110,7 +109,7 @@ namespace TankWars
             this.KeyDown += HandleKeyDown;
             drawingPanel.MouseMove += MouseMoveHandler;
             drawingPanel.MouseDown += HandleMouseClick;
-            //drawingPanel.MouseUp += HandleMouseUp;
+            drawingPanel.MouseUp += HandleMouseUp;
         }
 
         /// <summary>
@@ -140,7 +139,7 @@ namespace TankWars
             drawingPanel.setPlayerID(id);
         }
 
-
+      
         private void connectButton_Click(object sender, EventArgs e)
         {
             if (nameText.Text.Equals("") || nameText.Text.Equals(""))
@@ -158,6 +157,7 @@ namespace TankWars
         private void MouseMoveHandler(object sender, MouseEventArgs e)
         {
             controller.HandleMouseMovement(e.Location);
+            
         }
         private void HandleKeyDown(object sender, KeyEventArgs e)
         {
@@ -197,7 +197,7 @@ namespace TankWars
                     break;
             }
 
-
+            e.Handled = true;
         }
 
         private void HandleMouseClick(object sender, MouseEventArgs e)
@@ -215,6 +215,10 @@ namespace TankWars
 
 
         }
+        private void HandleMouseUp(object sender, MouseEventArgs e)
+        {
+            controller.HandleMouseClick("none");
+        }
 
 
         public class DrawingPanel : Panel
@@ -227,6 +231,7 @@ namespace TankWars
             Image DarkTurret;
             Image RedStar;
             Image BlueProj;
+            Image Explosion;
             public bool receivedWorld;
             public bool receivedTank;
             private int playerID;
@@ -241,6 +246,8 @@ namespace TankWars
                 RedStar = Image.FromFile("../../../Resources/Sprites/redStar.png");
                 RedStar = Image.FromFile("../../../Resources/Sprites/redStar.png");
                 BlueProj = Image.FromFile("../../../Resources/Sprites/shot_blue.png");
+                Explosion = Image.FromFile("../../../Resources/Sprites/explosion.png"); 
+
                 DoubleBuffered = true;
 
             }
@@ -305,7 +312,7 @@ namespace TankWars
                 Pen pen = new Pen(Color.Black, 2);
 
                 e.Graphics.DrawRectangle(pen, -50, -60, rectWidth, rectHeight);
-                switch (t.HP)
+                switch (t.Health)
                 {
                     case 3:
                         e.Graphics.FillRectangle(greenBrush, -50, -60, rectWidth, rectHeight);
@@ -353,14 +360,18 @@ namespace TankWars
                 Rectangle r = new Rectangle(-(tankWidth / 2), -(tankWidth / 2), tankWidth, tankWidth);
                 e.Graphics.DrawImage(DarkTurret, r);
             }
-
+            private void explosionDrawer(object o, PaintEventArgs e)
+            {
+                Rectangle r = new Rectangle(-25, -25, 50, 50);
+                e.Graphics.DrawImage(Explosion, r);
+            }
             protected override void OnPaint(PaintEventArgs e)
             {
                 if (receivedWorld == true && receivedTank == true)
                 {
 
                     e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
-
+                    
                     double playerX = theWorld.Tanks[playerID].Location.GetX();
                     double playerY = theWorld.Tanks[playerID].Location.GetY();
 
@@ -417,12 +428,22 @@ namespace TankWars
                             }
                         }
 
-
+                        List<Tank> disconnectedTank = new List<Tank>();
                         foreach (Tank tank in theWorld.Tanks.Values)
                         {
+                            if (tank.Health == 0)
+                            {
+                                DrawObjectWithTransform(e, tank, theWorld.worldSize, tank.Location.GetX(), tank.Location.GetY(), 0, explosionDrawer);
+                                continue;
+                            }
+                            else if (tank.Disconnected == true) { disconnectedTank.Add(tank); continue; }
                             DrawObjectWithTransform(e, tank, theWorld.worldSize, tank.Location.GetX(), tank.Location.GetY(), tank.Orientation.ToAngle(), tankDrawer);
                             DrawObjectWithTransform(e, tank, theWorld.worldSize, tank.Location.GetX(), tank.Location.GetY(), tank.Aiming.ToAngle(), turretDrawer);
 
+                        }
+                        foreach(Tank deadTank in disconnectedTank)
+                        {
+                            theWorld.Tanks.Remove(deadTank.TankID);
                         }
 
 
@@ -441,12 +462,19 @@ namespace TankWars
                         {
                             theWorld.PowerUps.Remove(power.powerID);
                         }
-
+                        List<Projectile> deadProjectile = new List<Projectile>();
                         foreach (Projectile proj in theWorld.Projectiles.Values)
                         {
+                            if(proj.Died == true)
+                            {
+                                deadProjectile.Add(proj);
+                            }
                             DrawObjectWithTransform(e, proj, theWorld.worldSize, proj.Location.GetX(), proj.Location.GetY(), proj.Direction.ToAngle(), ProjectileDrawer);
                         }
-
+                        foreach(Projectile proj in deadProjectile)
+                        {
+                            theWorld.Projectiles.Remove(proj.ProjID);
+                        }
                     }
                     base.OnPaint(e);
                 }

@@ -189,11 +189,14 @@ namespace TankWars
 
         public void HandleMouseMovement(Point p)
         {
-            float x = p.X;
-            float y = p.Y;
-            Vector2D vector = new Vector2D(x, y);
-            vector.Normalize();
-            command.Tdir = vector;
+            
+            
+                float x = p.X;
+                float y = p.Y;
+                Vector2D vector = new Vector2D(x, y);
+                vector.Normalize();
+                command.Tdir = vector;
+            
         }
 
         public void HandleMouseClick(string mouseClick)
@@ -209,6 +212,10 @@ namespace TankWars
             {
                 command.Fire = "alt";
 
+            }
+            else
+            {
+                command.Fire = "none";
             }
         }
     }
