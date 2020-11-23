@@ -191,8 +191,8 @@ namespace TankWars
         {
             
             
-                float x = p.X;
-                float y = p.Y;
+                float x = p.X - 450 ;
+                float y = p.Y - 450;
                 Vector2D vector = new Vector2D(x, y);
                 vector.Normalize();
                 command.Tdir = vector;
