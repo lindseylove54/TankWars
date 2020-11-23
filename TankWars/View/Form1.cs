@@ -438,7 +438,7 @@ namespace TankWars
                             List<Tank> disconnectedTank = new List<Tank>();
                             foreach (Tank tank in theWorld.Tanks.Values)
                             {
-                                if (tank.Health == 0)
+                                if (tank.Health == 0 && tank.Disconnected == false)
                                 {
                                     DrawObjectWithTransform(e, tank, theWorld.worldSize, tank.Location.GetX(), tank.Location.GetY(), 0, explosionDrawer);
                                     continue;
