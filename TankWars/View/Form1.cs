@@ -12,29 +12,14 @@ using System.Windows.Forms;
 
 namespace TankWars
 {
-    /**
-     * REQUIREMENTS FOR THE VIEW:
-     *      Allow a player to declare a name and choose a server by IP address or host name.
-     *      
-     *      Provide a way to display connection errors and to retry connecting.
-     *      
-     *      Draw the scene, including the tanks, projectiles, etc...The first 8 players(at least) should be drawn with a unique color or graphic 
-     *      that identifies that player. Beyond 8 players, you can reuse existing graphics or colors. The name, health, and score of each player should be displayed by their tank.
-     *      
-     *      Full credit will include polish and attention to detail, such as changing the color of the HP bar as it gets low, or an artistic way of drawing the beam attack and explosions.
-     *      
-     *      Your GUI should be able to keep up with the server and draw frames as fast as the server sends new information about the world, at least 60 frames per second.
-     *      
-     *      Follow the defined communication sequence and protocol (see below).
-     *      
-     *      Register keyboard and mouse handlers that recognize basic user inputs and invoke appropriate controller methods to process the inputs.
-     * **/
-
-    //
+    /// <summary>
+    /// Author:  Tyler Amy, Lindsey Loveland
+    /// Date: 11/23/2020
+    /// </summary>
     public partial class Form1 : Form
     {
         private GameController controller;
-
+        //the connect button
         private Button startButton;
         private TextBox nameText;
         private TextBox serverText;
@@ -46,7 +31,10 @@ namespace TankWars
 
 
 
-
+        /// <summary>
+        /// The view constructor for the GUI of TankWars
+        /// </summary>
+        /// <param name="ctrl"></param>
         public Form1(GameController ctrl)
         {
             InitializeComponent();
@@ -129,22 +117,43 @@ namespace TankWars
         /// </summary>
         private void tankReceived()
         {
+            //Notify the drawing panel that the players tank was received.
             drawingPanel.tankReceived();
         }
+        /// <summary>
+        /// This method passes the world from the controller to the drawing panel 
+        /// </summary>
+        /// <param name="w"></param>
         private void connectFromController(World w)
         {
+            //notify the drawing panel that the world has been received, and pass the world created in the controller to the panel
             drawingPanel.SetWorld(w);
         }
+        /// <summary>
+        /// This method passes the player id to the drawing panel
+        /// </summary>
+        /// <param name="id"></param>
         private void playerIDReceived(int id)
         {
+            //send the player ID that was received from the server, to the drawing panel
             drawingPanel.setPlayerID(id);
         }
-
+        /// <summary>
+        /// Method for handling when the form is closed
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
+            //handle the form closing 
             controller.HandleFormClosing(e);
         }
 
+        /// <summary>
+        /// Method for handling when the connect button is clicked. 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void connectButton_Click(object sender, EventArgs e)
         {
             if (nameText.Text.Equals("") || nameText.Text.Equals(""))
@@ -152,7 +161,9 @@ namespace TankWars
                 MessageBox.Show("Must fill out both Player Name and Server Address", "Error!",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+            //save the name written in the text box
             controller.playerName = nameText.Text;
+            //connect to server 
             controller.Connect(serverText.Text);
             startButton.Enabled = false;
             nameText.Enabled = false;
@@ -160,11 +171,22 @@ namespace TankWars
 
         }
 
+        /// <summary>
+        /// Method used for informing the controller the location of the mouse. 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void MouseMoveHandler(object sender, MouseEventArgs e)
         {
+            //let the controller know that the mouse moved locations, and send the mouses location 
             controller.HandleMouseMovement(e.Location);
             
         }
+        /// <summary>
+        /// Method for handling when a key is pressed down.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void HandleKeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.W)
@@ -183,9 +205,15 @@ namespace TankWars
             {
                 controller.HandleMoveRequest("right");
             }
+            //make sure the windows sound doesn't happen
             e.Handled = true;
             e.SuppressKeyPress = true;
         }
+        /// <summary>
+        /// Method for handling when a key is released
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void HandleKeyUp(object sender, KeyEventArgs e)
         {
            
@@ -204,10 +232,15 @@ namespace TankWars
                     controller.HandleMoveRequest("none");
                     break;
             }
+            //make sure the windows sounds don't happen
             e.Handled = true;
             e.SuppressKeyPress = true;
         }
-
+        /// <summary>
+        /// Method for handling when the mouse is pressed 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void HandleMouseClick(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Left)
@@ -223,20 +256,28 @@ namespace TankWars
 
 
         }
+        /// <summary>
+        /// Method for handling when the mouse is released 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void HandleMouseUp(object sender, MouseEventArgs e)
         {
             controller.HandleMouseClick("none");
         }
 
        
-
+        /// <summary>
+        /// The drawing panel class is responsible for drawing the TankWars game, it contains methods that center the players view and draws all the 
+        /// objects in the world 
+        /// </summary>
         public class DrawingPanel : Panel
         {
 
             private World theWorld;
+            //all the .png files used in our game
             Image walls;
             Image backGround;
-
             Image DarkTank;
             Image DarkTurret;
             Image BlueTank;
@@ -253,17 +294,18 @@ namespace TankWars
             Image RedTurret;
             Image YellowTank;
             Image YellowTurret;
-
-
             Image RedStar;
             Image BlueProj;
             Image Explosion;
 
+            
             public bool receivedWorld;
             public bool receivedTank;
             private int playerID;
+            //wallX and wallY are used for wall drawing. 
             private int wallX;
             private int wallY;
+            //frameCount is only used for drawing beams for a short period of time
             private int frameCount;
             Dictionary<int,Beam> beams;
 
@@ -341,11 +383,17 @@ namespace TankWars
                 e.Graphics.Transform = oldMatrix;
             }
 
+            /// <summary>
+            /// Delegate method for drawing all the tanks
+            /// </summary>
+            /// <param name="o"></param>
+            /// <param name="e"></param>
             private void tankDrawer(object o, PaintEventArgs e)
             {
                 int tankWidth = 60;
                 Tank t = o as Tank;
                 Rectangle r = new Rectangle(-(tankWidth / 2), -(tankWidth / 2), tankWidth, tankWidth);
+                //if the tankID is even
                 if(t.TankID % 2 == 0)
                 {
                     if(t.TankID % 8 == 0)
@@ -366,6 +414,7 @@ namespace TankWars
                         e.Graphics.DrawImage(GreenTank, r);
                     }
                 }
+                //if the tankID is odd
                 else 
                 {
                     if(t.TankID % 7 == 0)
@@ -391,16 +440,24 @@ namespace TankWars
 
 
             }
-
+            /// <summary>
+            /// Delegate method for drawing all the walls
+            /// </summary>
+            /// <param name="o"></param>
+            /// <param name="e"></param>
             private void wallDrawer(object o, PaintEventArgs e)
             {
                 int wallWidth = 50;
                 Wall wall = o as Wall;
                 Rectangle r = new Rectangle(-(wallWidth / 2), -(wallWidth / 2), wallWidth, wallWidth);
-                e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
 
                 e.Graphics.DrawImage(walls, r);
             }
+            /// <summary>
+            /// Delegate method for drawing all the powerups 
+            /// </summary>
+            /// <param name="o"></param>
+            /// <param name="e"></param>
             private void powerDrawer(object o, PaintEventArgs e)
             {
                 Powerup power = o as Powerup;
@@ -408,7 +465,11 @@ namespace TankWars
 
                 e.Graphics.DrawImage(RedStar, r);
             }
-
+            /// <summary>
+            /// Delegate method for drawing the projectile 
+            /// </summary>
+            /// <param name="o"></param>
+            /// <param name="e"></param>
             private void ProjectileDrawer(object o, PaintEventArgs e)
             {
                 //what color do we want the projectiles?
@@ -419,11 +480,17 @@ namespace TankWars
                 e.Graphics.DrawImage(BlueProj, -width / 2, -height / 2, width, height);
 
             }
+            /// <summary>
+            /// Delegate method for drawing the turret 
+            /// </summary>
+            /// <param name="o"></param>
+            /// <param name="e"></param>
             private void turretDrawer(object o, PaintEventArgs e)
             {
                 Tank t = o as Tank;
                 int tankWidth = 60;
                 Rectangle r = new Rectangle(-(tankWidth / 2), -(tankWidth / 2), tankWidth, tankWidth);
+                //if the tank ID is even
                 if (t.TankID % 2 == 0)
                 {
                     if (t.TankID % 8 == 0)
@@ -444,6 +511,7 @@ namespace TankWars
                         e.Graphics.DrawImage(GreenTurret, r);
                     }
                 }
+                //if the tankID is odd
                 else
                 {
                     if (t.TankID % 7 == 0)
@@ -465,11 +533,21 @@ namespace TankWars
                     }
                 }
             }
+            /// <summary>
+            /// Delegate method for drawing an explosion when a player dies
+            /// </summary>
+            /// <param name="o"></param>
+            /// <param name="e"></param>
             private void explosionDrawer(object o, PaintEventArgs e)
             {
                 Rectangle r = new Rectangle(-25, -25, 50, 50);
                 e.Graphics.DrawImage(Explosion, r);
             }
+            /// <summary>
+            /// Delegate method for drawing the health bar, player name, and player score under the tank. 
+            /// </summary>
+            /// <param name="o"></param>
+            /// <param name="e"></param>
             private void underTankDrawer(object o, PaintEventArgs e)
             {
                 Tank t = o as Tank;
@@ -486,6 +564,7 @@ namespace TankWars
 
                 e.Graphics.DrawRectangle(pen, -50, -60, rectWidth, rectHeight);
                 e.Graphics.DrawString(drawString, font, brush, -50, -40);
+                //change how much the health bar is filled, and the color associated with how much health the tank has left
                 switch (t.Health)
                 {
                     case 3:
@@ -500,6 +579,11 @@ namespace TankWars
                 }
 
             }
+            /// <summary>
+            /// Method for drawing beams
+            /// </summary>
+            /// <param name="o"></param>
+            /// <param name="e"></param>
             private void beamDrawer(object o, PaintEventArgs e)
             {
                 Beam beam = o as Beam;
@@ -509,12 +593,18 @@ namespace TankWars
                 
                 e.Graphics.DrawLine(pen, origin, dest);
             }
+            /// <summary>
+            /// Method for drawing all the worlds objects.
+            /// </summary>
+            /// <param name="e"></param>
             protected override void OnPaint(PaintEventArgs e)
             {
+                //make sure that the world and tank have been received before drawing anything
                 if (receivedWorld == true && receivedTank == true)
                 {
 
                     e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+                    
                     lock (theWorld)
                     {
                         double playerX = theWorld.Tanks[playerID].Location.GetX();
@@ -531,8 +621,10 @@ namespace TankWars
 
                         //draw the background
                         e.Graphics.DrawImage(backGround, 0, 0, theWorld.worldSize, theWorld.worldSize);
+                            //draw the walls
                             foreach (Wall wall in theWorld.Walls.Values)
                             {
+                            //if both the 'x's are equal, draw the walls from the lower y, to the higher y
                                 if (wall.P1.GetX() == wall.P2.GetX())
                                 {
                                     wallX = (int)wall.P1.GetX();
@@ -543,6 +635,7 @@ namespace TankWars
                                             DrawObjectWithTransform(e, wall, theWorld.worldSize, wallX, wallY, 0, wallDrawer);
                                         }
                                     }
+
                                     else
                                     {
                                         for (wallY = (int)wall.P1.GetY(); wallY <= wall.P2.GetY(); wallY += 50)
@@ -553,7 +646,8 @@ namespace TankWars
                                 }
                                 else
                                 {
-                                    wallY = (int)wall.P1.GetY();
+                                //if both the 'y's are equal, draw the walls from the lower x, to the higher x
+                                wallY = (int)wall.P1.GetY();
                                     if (wall.P1.GetX() > wall.P2.GetX())
                                     {
                                         for (wallX = (int)wall.P2.GetX(); wallX <= wall.P1.GetX(); wallX += 50)
@@ -570,67 +664,85 @@ namespace TankWars
                                     }
                                 }
                             }
-
+                            //this list is for keeping track of a tank that has disconnected
                             List<Tank> disconnectedTank = new List<Tank>();
                             foreach (Tank tank in theWorld.Tanks.Values)
                             {
+                                    //if the tank hasn't disconnected but it's health is gone, draw the explosion
                                 if (tank.Health == 0 && tank.Disconnected == false)
                                 {
                                     DrawObjectWithTransform(e, tank, theWorld.worldSize, tank.Location.GetX(), tank.Location.GetY(), 0, explosionDrawer);
                                     continue;
                                 }
+                                //if the tank is disconnected, add it to the list of disconnected tanks
                                 else if (tank.Disconnected == true) { disconnectedTank.Add(tank); continue; }
+                                //draw the tank
                                 DrawObjectWithTransform(e, tank, theWorld.worldSize, tank.Location.GetX(), tank.Location.GetY(), tank.Orientation.ToAngle(), tankDrawer);
+                                //draw the turret
                                 DrawObjectWithTransform(e, tank, theWorld.worldSize, tank.Location.GetX(), tank.Location.GetY(), tank.Aiming.ToAngle(), turretDrawer);
+                                //draw the health bar, playerName, and score under the tank
                                 DrawObjectWithTransform(e, tank, theWorld.worldSize, tank.Location.GetX(), tank.Location.GetY() + 100, 0, underTankDrawer);
 
                             }
+                            //remove disconnected tanks from the world
                             foreach (Tank deadTank in disconnectedTank)
                             {
                                 theWorld.Tanks.Remove(deadTank.TankID);
                             }
 
 
-
+                            //a list to keep track of the consumed powerups
                             List<Powerup> deadPower = new List<Powerup>();
                             foreach (Powerup power in theWorld.PowerUps.Values)
                             {
-
+                                //add the powerup to the list of consumed powerups 
                                 if (power.Died == true)
                                 {
                                     deadPower.Add(power);
                                 }
+                                //draw the powerup
                                 DrawObjectWithTransform(e, power, theWorld.worldSize, power.Location.GetX(), power.Location.GetY(), 0, powerDrawer);
                             }
+                            //remove consumed powerups
                             foreach (Powerup power in deadPower)
                             {
                                 theWorld.PowerUps.Remove(power.powerID);
                             }
+                            //list to keep track of the projectiles that have been shot and consumed 
                             List<Projectile> deadProjectile = new List<Projectile>();
+
                             foreach (Projectile proj in theWorld.Projectiles.Values)
                             {
+                                //if the projectile hits a wall, or another player, add it to the list of projectiles to remove 
                                 if (proj.Died == true)
                                 {
                                     deadProjectile.Add(proj);
                                 }
+                                //draw the projectile
                                 DrawObjectWithTransform(e, proj, theWorld.worldSize, proj.Location.GetX(), proj.Location.GetY(), proj.Direction.ToAngle(), ProjectileDrawer);
                             }
+                            //remove the consumed projectiles from the world 
                             foreach (Projectile proj in deadProjectile)
                             {
                                 theWorld.Projectiles.Remove(proj.ProjID);
                             }
+                            //list to add dead beams...aka beams that should no longer be in the world after fired
                             List<Beam> deadBeams = new List<Beam>();
                             foreach (Beam beam in beams.Values)
                             {
                             frameCount++;
+                            //draw the beam for 20 frames
                             if (frameCount >= 20)
                             {
+                                //reset the frame count and add the beam to the "dead beam 
                                 frameCount = 0;
                                 deadBeams.Add(beam);
                                 continue;
                             }
+                            //draw the beam
                             DrawObjectWithTransform(e, beam, theWorld.worldSize, beam.Origin.GetX(), beam.Origin.GetY(), beam.Direction.ToAngle(), beamDrawer);
                             }
+                            //remove the dead beams
                             foreach(Beam b in deadBeams)
                             {
                             beams.Remove(b.BeamID);
@@ -638,6 +750,7 @@ namespace TankWars
                         base.OnPaint(e);
                     }
                 }
+                //this is called if the tank and world haven't both been received yet
                 else
                 {
                     return;
@@ -645,20 +758,34 @@ namespace TankWars
             }
 
 
-
+            /// <summary>
+            /// set the drawing panel world equal to the world from the controller.
+            /// </summary>
+            /// <param name="w">world from the controller</param>
             public void SetWorld(World w)
             {
                 theWorld = w;
                 receivedWorld = true;
             }
+            /// <summary>
+            /// when this method is called it will set receivedTank to true, letting us know we can start drawing
+            /// </summary>
             public void tankReceived()
             {
                 receivedTank = true;
             }
+            /// <summary>
+            /// set the playerID in the drawing panel to the passed in id the server gave in the controller
+            /// </summary>
+            /// <param name="id"></param>
             public void setPlayerID(int id)
             {
                 playerID = id;
             }
+            /// <summary>
+            /// if a beam is read from the server, add it to the list of beams to draw in this panel 
+            /// </summary>
+            /// <param name="b"></param>
             public void beamHandler(Beam b)
             {
                 beams.Add(b.BeamID, b);

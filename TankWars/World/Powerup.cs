@@ -3,7 +3,10 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using TankWars;
-
+/// <summary>
+/// Author:  Tyler Amy, Lindsey Loveland
+/// Date: 11/23/2020
+/// </summary>
 namespace TankWars
 {
     [JsonObject(MemberSerialization.OptIn)]

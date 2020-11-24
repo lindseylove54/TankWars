@@ -3,7 +3,10 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
-
+/// <summary>
+/// Author:  Tyler Amy, Lindsey Loveland
+/// Date: 11/23/2020
+/// </summary>
 namespace TankWars
 {
     public class World

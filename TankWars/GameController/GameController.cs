@@ -7,56 +7,82 @@ using System.Drawing;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
+/// <summary>
+/// Author:  Tyler Amy, Lindsey Loveland
+/// Date: 11/23/2020
+/// </summary>
 namespace TankWars
 {
+    /// <summary>
+    /// The GameController handles receiving data from the server, and informing the view the changed.  It is also responsible for sending
+    /// JSON commands to the server. 
+    /// </summary>
     public class GameController
     {
-
+        //the world that the entire solution will be using 
         private World theWorld;
-
+        //Used for closing the form when needed. 
         SocketState theServer = null;
+        //List of delegate methods 
         public delegate void ServerUpdateHandler();
         public delegate void ConnectWorldToView(World w);
         public delegate void TankReceivedFromServer();
         public delegate void ConnectPlayerIDToView(int id);
         public delegate void BeamFire(Beam b);
 
+        //List of events 
         public event ServerUpdateHandler UpdateArrived;
         public event ConnectWorldToView ConnectToView;
         public event TankReceivedFromServer TankReceived;
         public event ConnectPlayerIDToView connectID;
         public event BeamFire shootBeam;
 
+        //ControlCommand object for sending JSON objects to the server. 
         ControlCommand command;
+        //bools that must be true in order to start drawing. 
         bool playerIDReceived;
         bool WorldSizeReceived;
         public string playerName
         {
             get;  set;
         }
-
+        //these two variables are initialized during the first step of the handshake. 
         private int worldSize;
         private int playerID;
 
+        /// <summary>
+        /// GameController constructor
+        /// </summary>
         public GameController()
         {
             command = new ControlCommand();
         }
 
-
+        /// <summary>
+        /// Called when the connect button is clicked.  Establishes a connection to the server. 
+        /// </summary>
+        /// <param name="address"></param>
         public void Connect(string address)
         {
             Networking.ConnectToServer(firstContact, address, 11000);
         }
 
+        /// <summary>
+        /// First stage of the handshake between client and server.  
+        /// </summary>
+        /// <param name="state"></param>
         private void firstContact(SocketState state)
         {
 
             state.OnNetworkAction = ReceiveStartup;
+            //send the server the player name 
             Networking.Send(state.TheSocket, playerName + "\n");
             Networking.GetData(state);
         }
-
+        /// <summary>
+        /// Second phase of the handshake between server and client
+        /// </summary>
+        /// <param name="state"></param>
         private void ReceiveStartup(SocketState state)
         {
             //extract data
@@ -64,8 +90,9 @@ namespace TankWars
             {
                 //create the world once the worldSize has been received. 
                 theWorld = new World(worldSize);
-
+                //send the world to the view 
                 ConnectToView(theWorld);
+                //send the playerID to the view
                 connectID(playerID);
                 state.OnNetworkAction = ReceiveWorld;
                 theServer = state;
@@ -183,16 +210,22 @@ namespace TankWars
         }
 
 
-
+        /// <summary>
+        /// this method is used for handling when the tank moves, sending the appropriate JSON command to the server. 
+        /// </summary>
+        /// <param name="movement"></param>
         public void HandleMoveRequest(string movement)
         {
             command.Moving = movement;
         }
-
+        /// <summary>
+        /// Send the appropriate JSON for the Tdir of the turret to the server. 
+        /// </summary>
+        /// <param name="p"></param>
         public void HandleMouseMovement(Point p)
         {
             
-            
+                //-450 to both x and y coordinates, to center the mouse and tank
                 float x = p.X - 450 ;
                 float y = p.Y - 450;
                 Vector2D vector = new Vector2D(x, y);
@@ -200,7 +233,10 @@ namespace TankWars
                 command.Tdir = vector;
             
         }
-
+        /// <summary>
+        /// This method is used for handling when the mouse is clicked, and sending the appropriate JSON command to the server
+        /// </summary>
+        /// <param name="mouseClick"></param>
         public void HandleMouseClick(string mouseClick)
         {
 
@@ -221,6 +257,10 @@ namespace TankWars
             }
         }
 
+        /// <summary>
+        /// This method is invoked when the form closes.
+        /// </summary>
+        /// <param name="e"></param>
         public void HandleFormClosing(FormClosingEventArgs e)
         {
             if (MessageBox.Show("Are you sure you want to exit?", "Close Application", MessageBoxButtons.YesNo) == DialogResult.Yes)
