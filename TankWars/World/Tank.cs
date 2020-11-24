@@ -1,15 +1,17 @@
 ﻿using Newtonsoft.Json;
 using System;
 using TankWars;
-
-namespace World
+/// <summary>
+/// Author:  Tyler Amy, Lindsey Loveland
+/// Date: 11/23/2020
+/// </summary>
+namespace TankWars
 {
-    //Not Finished
     [JsonObject(MemberSerialization.OptIn)]
     public class Tank
     {
         [JsonProperty(PropertyName = "tank")]
-        private int ID;
+        private int tankID;
 
         [JsonProperty(PropertyName = "loc")]
         private Vector2D location;
@@ -18,13 +20,13 @@ namespace World
         private Vector2D orientation;
 
         [JsonProperty(PropertyName = "tdir")]
-        private Vector2D aiming = new Vector2D(0, -1);
+        private Vector2D aiming = new Vector2D();
 
         [JsonProperty(PropertyName = "name")]
         private string name;
 
-        //[JsonProperty(PropertyName = "hp")]
-        //private int hitPoints = Constants.MaxHP;
+        [JsonProperty(PropertyName = "hp")]
+        private int hitPoints = 3;
 
         [JsonProperty(PropertyName = "score")]
         private int score = 0;
@@ -38,5 +40,14 @@ namespace World
         [JsonProperty(PropertyName = "join")]
         private bool joined = false;
 
+        public Vector2D Location { get =>  location; set => location = value; }
+        public int TankID { get => tankID; set => tankID = value; }
+        public Vector2D Orientation { get => orientation; set => orientation = value; }
+        public Vector2D Aiming { get => aiming; set => aiming = value; }
+        public int Health { get => hitPoints; set => hitPoints = value; }
+        public bool Disconnected { get => disconnected; set => disconnected = value; }
+        public int PlayerScore { get => score; set => score = value; }
+        public string PlayerName { get => name; set => name = value; }
+        
     }
 }
