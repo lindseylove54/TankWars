@@ -154,10 +154,10 @@ namespace TankWars
             }
             controller.playerName = nameText.Text;
             controller.Connect(serverText.Text);
-            drawingPanel.setPlayerName(nameText.Text);
             startButton.Enabled = false;
             nameText.Enabled = false;
             serverText.Enabled = false;
+
         }
 
         private void MouseMoveHandler(object sender, MouseEventArgs e)
@@ -264,10 +264,8 @@ namespace TankWars
             private int playerID;
             private int wallX;
             private int wallY;
-            private string playerName;
             private int frameCount;
             Dictionary<int,Beam> beams;
-            Random rnumber;
 
             public DrawingPanel()
             {
@@ -300,7 +298,6 @@ namespace TankWars
                 frameCount = 0;
 
                 DoubleBuffered = true;
-                rnumber = new Random();
 
             }
 
@@ -349,7 +346,6 @@ namespace TankWars
                 int tankWidth = 60;
                 Tank t = o as Tank;
                 Rectangle r = new Rectangle(-(tankWidth / 2), -(tankWidth / 2), tankWidth, tankWidth);
-                int colorNumber = rnumber.Next(1,9);
                 if(t.TankID % 2 == 0)
                 {
                     if(t.TankID % 8 == 0)
@@ -479,8 +475,8 @@ namespace TankWars
                 Tank t = o as Tank;
                 int rectWidth = 90;
                 int rectHeight = 15;
-                string drawString = playerName + ":" + " " + t.PlayerScore;
-                SolidBrush greenBrush = new SolidBrush(Color.LightGreen);
+                string drawString = t.PlayerName + ":" + " " + t.PlayerScore;
+                SolidBrush greenBrush = new SolidBrush(Color.DarkGreen);
                 SolidBrush yellowBrush = new SolidBrush(Color.Yellow);
                 SolidBrush redBrush = new SolidBrush(Color.Red);
                 Pen pen = new Pen(Color.Black, 2);
@@ -509,7 +505,7 @@ namespace TankWars
                 Beam beam = o as Beam;
                 Pen pen = new Pen(Color.Red, 4);
                 Point origin = new Point(0, 0);
-                Point dest = new Point(0, 100000000);
+                Point dest = new Point(0, -theWorld.worldSize * 2);
                 
                 e.Graphics.DrawLine(pen, origin, dest);
             }
@@ -667,10 +663,7 @@ namespace TankWars
             {
                 beams.Add(b.BeamID, b);
             }
-            public void setPlayerName(string name)
-            {
-                playerName = name;
-            }
+           
         }
     }
 }

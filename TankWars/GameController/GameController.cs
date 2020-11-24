@@ -32,7 +32,7 @@ namespace TankWars
         bool WorldSizeReceived;
         public string playerName
         {
-            get; set;
+            get;  set;
         }
 
         private int worldSize;

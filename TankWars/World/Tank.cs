@@ -44,6 +44,7 @@ namespace TankWars
         public int Health { get => hitPoints; set => hitPoints = value; }
         public bool Disconnected { get => disconnected; set => disconnected = value; }
         public int PlayerScore { get => score; set => score = value; }
+        public string PlayerName { get => name; set => name = value; }
         
     }
 }
