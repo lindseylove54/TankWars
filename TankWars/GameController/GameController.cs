@@ -227,7 +227,7 @@ namespace TankWars
             {
                 lock (theWorld)
                 {
-                    Application.Exit();
+                    Environment.Exit(0);
                     theServer.TheSocket.Close(0);
                 }
 

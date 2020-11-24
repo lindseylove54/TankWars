@@ -266,10 +266,9 @@ namespace TankWars
             private int wallY;
             private string playerName;
             private int frameCount;
-            private Dictionary<int,Beam> beams;
-            private Random rnumber;
-            private int turretColorNumber;
-            private int colorNumber;
+            Dictionary<int,Beam> beams;
+            Random rnumber;
+
             public DrawingPanel()
             {
                 walls = Image.FromFile("../../../Resources/Sprites/WallSprite.png");
@@ -302,8 +301,7 @@ namespace TankWars
 
                 DoubleBuffered = true;
                 rnumber = new Random();
-                colorNumber = rnumber.Next(1, 9);
-                turretColorNumber = colorNumber;
+
             }
 
             // A delegate for DrawObjectWithTransform
@@ -351,21 +349,52 @@ namespace TankWars
                 int tankWidth = 60;
                 Tank t = o as Tank;
                 Rectangle r = new Rectangle(-(tankWidth / 2), -(tankWidth / 2), tankWidth, tankWidth);
-                if (colorNumber == 1) { e.Graphics.DrawImage(DarkTank, r);turretColorNumber = 1; }
-                    if (colorNumber == 2) { e.Graphics.DrawImage(BlueTank, r); turretColorNumber = 2; }
-                        if (colorNumber == 3) { e.Graphics.DrawImage(GreenTank, r); turretColorNumber = 3; }
-                            if (colorNumber == 4) { e.Graphics.DrawImage(OrangeTank, r); turretColorNumber = 4; }
-                                if (colorNumber == 5) { e.Graphics.DrawImage(LightGreenTank, r); turretColorNumber = 5; }
-                                    if (colorNumber == 6) { e.Graphics.DrawImage(PurpleTank, r); turretColorNumber = 6; }
-                                        if (colorNumber == 7) { e.Graphics.DrawImage(RedTank, r); turretColorNumber = 7; }
-                                             if (colorNumber == 8){ e.Graphics.DrawImage(YellowTank, r); turretColorNumber = 8; }
-                  
-            }
+                int colorNumber = rnumber.Next(1,9);
+                if(t.TankID % 2 == 0)
+                {
+                    if(t.TankID % 8 == 0)
+                    {
+                        e.Graphics.DrawImage(DarkTank, r);
+                    }
+                    else if(t.TankID % 6 == 0)
+                    {
+                        e.Graphics.DrawImage(BlueTank, r);
+                    }
+                    else if(t.TankID % 4 == 0)
+                    {
+                        e.Graphics.DrawImage(RedTank, r);
+
+                    }
+                    else
+                    {
+                        e.Graphics.DrawImage(GreenTank, r);
+                    }
+                }
+                else 
+                {
+                    if(t.TankID % 7 == 0)
+                    {
+                        e.Graphics.DrawImage(YellowTank, r);
+
+                    }
+                    else if(t.TankID % 5 == 0)
+                    {
+                        e.Graphics.DrawImage(OrangeTank, r);
+                    }
+                    else if(t.TankID % 3 == 0)
+                    {
+                        e.Graphics.DrawImage(LightGreenTank, r);
+                    }
+                    else
+                    {
+                        e.Graphics.DrawImage(PurpleTank, r);
+                    }
+                }
 
                 
 
 
-            
+            }
 
             private void wallDrawer(object o, PaintEventArgs e)
             {
@@ -396,16 +425,49 @@ namespace TankWars
             }
             private void turretDrawer(object o, PaintEventArgs e)
             {
+                Tank t = o as Tank;
                 int tankWidth = 60;
                 Rectangle r = new Rectangle(-(tankWidth / 2), -(tankWidth / 2), tankWidth, tankWidth);
-                if (turretColorNumber == 1) e.Graphics.DrawImage(DarkTurret, r);
-                if (turretColorNumber == 2) e.Graphics.DrawImage(BlueTurret, r);
-                if (turretColorNumber == 3) e.Graphics.DrawImage(GreenTurret, r);
-                if (turretColorNumber == 4) e.Graphics.DrawImage(OrangeTurret, r);
-                if (turretColorNumber == 5) e.Graphics.DrawImage(LightGreenTurret, r);
-                if (turretColorNumber == 6) e.Graphics.DrawImage(PurpleTurret, r);
-                if (turretColorNumber == 7) e.Graphics.DrawImage(RedTurret, r);
-                if (turretColorNumber == 8) e.Graphics.DrawImage(YellowTurret, r);
+                if (t.TankID % 2 == 0)
+                {
+                    if (t.TankID % 8 == 0)
+                    {
+                        e.Graphics.DrawImage(DarkTurret, r);
+                    }
+                    else if (t.TankID % 6 == 0)
+                    {
+                        e.Graphics.DrawImage(BlueTurret, r);
+                    }
+                    else if (t.TankID % 4 == 0)
+                    {
+                        e.Graphics.DrawImage(RedTurret, r);
+
+                    }
+                    else
+                    {
+                        e.Graphics.DrawImage(GreenTurret, r);
+                    }
+                }
+                else
+                {
+                    if (t.TankID % 7 == 0)
+                    {
+                        e.Graphics.DrawImage(YellowTurret, r);
+
+                    }
+                    else if (t.TankID % 5 == 0)
+                    {
+                        e.Graphics.DrawImage(OrangeTurret, r);
+                    }
+                    else if (t.TankID % 3 == 0)
+                    {
+                        e.Graphics.DrawImage(LightGreenTurret, r);
+                    }
+                    else
+                    {
+                        e.Graphics.DrawImage(PurpleTurret, r);
+                    }
+                }
             }
             private void explosionDrawer(object o, PaintEventArgs e)
             {
@@ -447,7 +509,7 @@ namespace TankWars
                 Beam beam = o as Beam;
                 Pen pen = new Pen(Color.Red, 4);
                 Point origin = new Point(0, 0);
-                Point dest = new Point(0, -theWorld.worldSize * 2);
+                Point dest = new Point(0, 100000000);
                 
                 e.Graphics.DrawLine(pen, origin, dest);
             }

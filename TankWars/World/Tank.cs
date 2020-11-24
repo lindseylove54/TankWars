@@ -37,7 +37,6 @@ namespace TankWars
         [JsonProperty(PropertyName = "join")]
         private bool joined = false;
 
-
         public Vector2D Location { get =>  location; set => location = value; }
         public int TankID { get => tankID; set => tankID = value; }
         public Vector2D Orientation { get => orientation; set => orientation = value; }
@@ -45,9 +44,6 @@ namespace TankWars
         public int Health { get => hitPoints; set => hitPoints = value; }
         public bool Disconnected { get => disconnected; set => disconnected = value; }
         public int PlayerScore { get => score; set => score = value; }
-        public Tank( )
-        {
-            
-        }
+        
     }
 }
