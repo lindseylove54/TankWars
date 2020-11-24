@@ -11,7 +11,7 @@ using System.Windows.Forms;
 /// Author:  Tyler Amy, Lindsey Loveland
 /// Date: 11/23/2020
 /// </summary>
-namespace TankWars
+namespace TankWars 
 {
     /// <summary>
     /// The GameController handles receiving data from the server, and informing the view the changed.  It is also responsible for sending
