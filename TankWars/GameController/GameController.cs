@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Text.RegularExpressions;
+using System.Windows.Forms;
 
 namespace TankWars
 {
@@ -13,17 +14,18 @@ namespace TankWars
 
         private World theWorld;
 
-
+        SocketState theServer = null;
         public delegate void ServerUpdateHandler();
         public delegate void ConnectWorldToView(World w);
         public delegate void TankReceivedFromServer();
         public delegate void ConnectPlayerIDToView(int id);
+        public delegate void BeamFire(Beam b);
 
         public event ServerUpdateHandler UpdateArrived;
         public event ConnectWorldToView ConnectToView;
         public event TankReceivedFromServer TankReceived;
         public event ConnectPlayerIDToView connectID;
-
+        public event BeamFire shootBeam;
 
         ControlCommand command;
         bool playerIDReceived;
@@ -66,6 +68,7 @@ namespace TankWars
                 ConnectToView(theWorld);
                 connectID(playerID);
                 state.OnNetworkAction = ReceiveWorld;
+                theServer = state;
             }
 
             Networking.GetData(state);
@@ -125,7 +128,7 @@ namespace TankWars
                     if (token != null)
                     {
                         Beam beam = JsonConvert.DeserializeObject<Beam>(s);
-                        theWorld.Beams[beam.beamID] = beam;
+                        shootBeam(beam);
                         state.RemoveData(0, s.Length);
                         continue;
                     }
@@ -217,5 +220,24 @@ namespace TankWars
                 command.Fire = "none";
             }
         }
+
+        public void HandleFormClosing(FormClosingEventArgs e)
+        {
+            if (MessageBox.Show("Are you sure you want to exit?", "Close Application", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            {
+                lock (theWorld)
+                {
+                    Application.Exit();
+                    theServer.TheSocket.Close(0);
+                }
+
+            }
+            else
+            {
+                e.Cancel = true;
+                return;
+            }
+        }
+
     }
 }

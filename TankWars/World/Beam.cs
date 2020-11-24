@@ -22,7 +22,10 @@ namespace TankWars
         [JsonProperty(PropertyName = "owner")]
         private bool owner;
 
-        public int beamID { get => ID; set => ID = value; }
+        public int BeamID { get => ID; set => ID = value; }
+        public bool Owner { get => owner; set => owner = value; }
+        public Vector2D Origin { get => org; set => org = value; }
+        public Vector2D Direction { get => dir; set => dir = value; }
 
     }
 }

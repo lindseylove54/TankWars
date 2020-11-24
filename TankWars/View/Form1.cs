@@ -56,6 +56,7 @@ namespace TankWars
             controller.ConnectToView += connectFromController;
             controller.TankReceived += tankReceived;
             controller.connectID += playerIDReceived;
+            this.FormClosing += Form1_FormClosing;
             ClientSize = new Size(viewSize, viewSize + menuSize);
 
 
@@ -102,6 +103,7 @@ namespace TankWars
             drawingPanel.Location = new Point(0, menuSize);
             drawingPanel.Size = new Size(viewSize, viewSize);
             this.Controls.Add(drawingPanel);
+            controller.shootBeam += drawingPanel.beamHandler;
 
             // Set up key and mouse handlers
             this.KeyUp += HandleKeyUp;
@@ -138,7 +140,11 @@ namespace TankWars
             drawingPanel.setPlayerID(id);
         }
 
-      
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            controller.HandleFormClosing(e);
+        }
+
         private void connectButton_Click(object sender, EventArgs e)
         {
             if (nameText.Text.Equals("") || nameText.Text.Equals(""))
@@ -178,9 +184,11 @@ namespace TankWars
                 controller.HandleMoveRequest("right");
             }
             e.Handled = true;
+            e.SuppressKeyPress = true;
         }
         private void HandleKeyUp(object sender, KeyEventArgs e)
         {
+           
             switch (e.KeyCode)
             {
                 case Keys.W:
@@ -196,8 +204,8 @@ namespace TankWars
                     controller.HandleMoveRequest("none");
                     break;
             }
-
             e.Handled = true;
+            e.SuppressKeyPress = true;
         }
 
         private void HandleMouseClick(object sender, MouseEventArgs e)
@@ -220,6 +228,7 @@ namespace TankWars
             controller.HandleMouseClick("none");
         }
 
+       
 
         public class DrawingPanel : Panel
         {
@@ -227,30 +236,74 @@ namespace TankWars
             private World theWorld;
             Image walls;
             Image backGround;
+
             Image DarkTank;
             Image DarkTurret;
+            Image BlueTank;
+            Image BlueTurret;
+            Image GreenTank;
+            Image GreenTurret;
+            Image OrangeTank;
+            Image OrangeTurret;
+            Image LightGreenTank;
+            Image LightGreenTurret;
+            Image PurpleTank;
+            Image PurpleTurret;
+            Image RedTank;
+            Image RedTurret;
+            Image YellowTank;
+            Image YellowTurret;
+
+
             Image RedStar;
             Image BlueProj;
             Image Explosion;
+
             public bool receivedWorld;
             public bool receivedTank;
             private int playerID;
             private int wallX;
             private int wallY;
             private string playerName;
+            private int frameCount;
+            private Dictionary<int,Beam> beams;
+            private Random rnumber;
+            private int turretColorNumber;
+            private int colorNumber;
             public DrawingPanel()
             {
                 walls = Image.FromFile("../../../Resources/Sprites/WallSprite.png");
                 backGround = Image.FromFile("../../../Resources/Sprites/Background.png");
+
                 DarkTank = Image.FromFile("../../../Resources/Sprites/DarkTank.png");
                 DarkTurret = Image.FromFile("../../../Resources/Sprites/DarkTurret.png");
+                BlueTank = Image.FromFile("../../../Resources/Sprites/BlueTank.png");
+                BlueTurret = Image.FromFile("../../../Resources/Sprites/BlueTurret.png");
+                GreenTank = Image.FromFile("../../../Resources/Sprites/GreenTank.png");
+                GreenTurret = Image.FromFile("../../../Resources/Sprites/GreenTurret.png");
+                OrangeTank = Image.FromFile("../../../Resources/Sprites/OrangeTank.png");
+                OrangeTurret = Image.FromFile("../../../Resources/Sprites/OrangeTurret.png");
+                LightGreenTank = Image.FromFile("../../../Resources/Sprites/LightGreenTank.png");
+                LightGreenTurret = Image.FromFile("../../../Resources/Sprites/LightGreenTurret.png");
+                PurpleTank = Image.FromFile("../../../Resources/Sprites/PurpleTank.png");
+                PurpleTurret = Image.FromFile("../../../Resources/Sprites/PurpleTurret.png");
+                RedTank = Image.FromFile("../../../Resources/Sprites/RedTank.png");
+                RedTurret = Image.FromFile("../../../Resources/Sprites/RedTurret.png");
+                YellowTank = Image.FromFile("../../../Resources/Sprites/YellowTank.png");
+                YellowTurret = Image.FromFile("../../../Resources/Sprites/YellowTurret.png");
+
+
                 RedStar = Image.FromFile("../../../Resources/Sprites/redStar.png");
                 RedStar = Image.FromFile("../../../Resources/Sprites/redStar.png");
                 BlueProj = Image.FromFile("../../../Resources/Sprites/shot_blue.png");
-                Explosion = Image.FromFile("../../../Resources/Sprites/explosion.png"); 
+                Explosion = Image.FromFile("../../../Resources/Sprites/explosion.png");
+                beams = new Dictionary<int, Beam>();
+                frameCount = 0;
 
                 DoubleBuffered = true;
-
+                rnumber = new Random();
+                colorNumber = rnumber.Next(1, 9);
+                turretColorNumber = colorNumber;
             }
 
             // A delegate for DrawObjectWithTransform
@@ -298,12 +351,21 @@ namespace TankWars
                 int tankWidth = 60;
                 Tank t = o as Tank;
                 Rectangle r = new Rectangle(-(tankWidth / 2), -(tankWidth / 2), tankWidth, tankWidth);
-                e.Graphics.DrawImage(DarkTank, r);
-                Rectangle turret = new Rectangle(-(tankWidth / 2 - 4), -(tankWidth / 2 - 4), tankWidth - 10, tankWidth - 10);
+                if (colorNumber == 1) { e.Graphics.DrawImage(DarkTank, r);turretColorNumber = 1; }
+                    if (colorNumber == 2) { e.Graphics.DrawImage(BlueTank, r); turretColorNumber = 2; }
+                        if (colorNumber == 3) { e.Graphics.DrawImage(GreenTank, r); turretColorNumber = 3; }
+                            if (colorNumber == 4) { e.Graphics.DrawImage(OrangeTank, r); turretColorNumber = 4; }
+                                if (colorNumber == 5) { e.Graphics.DrawImage(LightGreenTank, r); turretColorNumber = 5; }
+                                    if (colorNumber == 6) { e.Graphics.DrawImage(PurpleTank, r); turretColorNumber = 6; }
+                                        if (colorNumber == 7) { e.Graphics.DrawImage(RedTank, r); turretColorNumber = 7; }
+                                             if (colorNumber == 8){ e.Graphics.DrawImage(YellowTank, r); turretColorNumber = 8; }
+                  
+            }
+
                 
 
 
-            }
+            
 
             private void wallDrawer(object o, PaintEventArgs e)
             {
@@ -336,7 +398,14 @@ namespace TankWars
             {
                 int tankWidth = 60;
                 Rectangle r = new Rectangle(-(tankWidth / 2), -(tankWidth / 2), tankWidth, tankWidth);
-                e.Graphics.DrawImage(DarkTurret, r);
+                if (turretColorNumber == 1) e.Graphics.DrawImage(DarkTurret, r);
+                if (turretColorNumber == 2) e.Graphics.DrawImage(BlueTurret, r);
+                if (turretColorNumber == 3) e.Graphics.DrawImage(GreenTurret, r);
+                if (turretColorNumber == 4) e.Graphics.DrawImage(OrangeTurret, r);
+                if (turretColorNumber == 5) e.Graphics.DrawImage(LightGreenTurret, r);
+                if (turretColorNumber == 6) e.Graphics.DrawImage(PurpleTurret, r);
+                if (turretColorNumber == 7) e.Graphics.DrawImage(RedTurret, r);
+                if (turretColorNumber == 8) e.Graphics.DrawImage(YellowTurret, r);
             }
             private void explosionDrawer(object o, PaintEventArgs e)
             {
@@ -372,6 +441,15 @@ namespace TankWars
                         break;
                 }
 
+            }
+            private void beamDrawer(object o, PaintEventArgs e)
+            {
+                Beam beam = o as Beam;
+                Pen pen = new Pen(Color.Red, 4);
+                Point origin = new Point(0, 0);
+                Point dest = new Point(0, -theWorld.worldSize * 2);
+                
+                e.Graphics.DrawLine(pen, origin, dest);
             }
             protected override void OnPaint(PaintEventArgs e)
             {
@@ -483,6 +561,22 @@ namespace TankWars
                             {
                                 theWorld.Projectiles.Remove(proj.ProjID);
                             }
+                            List<Beam> deadBeams = new List<Beam>();
+                            foreach (Beam beam in beams.Values)
+                            {
+                            frameCount++;
+                            if (frameCount >= 20)
+                            {
+                                frameCount = 0;
+                                deadBeams.Add(beam);
+                                continue;
+                            }
+                            DrawObjectWithTransform(e, beam, theWorld.worldSize, beam.Origin.GetX(), beam.Origin.GetY(), beam.Direction.ToAngle(), beamDrawer);
+                            }
+                            foreach(Beam b in deadBeams)
+                            {
+                            beams.Remove(b.BeamID);
+                            }
                         base.OnPaint(e);
                     }
                 }
@@ -507,7 +601,10 @@ namespace TankWars
             {
                 playerID = id;
             }
-            
+            public void beamHandler(Beam b)
+            {
+                beams.Add(b.BeamID, b);
+            }
             public void setPlayerName(string name)
             {
                 playerName = name;
